@@ -28,6 +28,7 @@
     "budo": "^5.1.0",
     "canvas-loop": "^1.0.6",
     "draw-triangles-2d": "^1.0.0",
+    "ecstatic": "^2.0.0",
     "extract-svg-path": "^2.1.0",
     "garnish": "^3.2.1",
     "gl-vec3": "^1.0.3",
