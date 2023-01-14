@@ -8,11 +8,11 @@
 }
 
 .grid {
+  padding: 0 4rem;
   display: grid;
-  gap: 12px;
   grid-template-columns: repeat(3, minmax(33%, auto));
-  width: var(--max-width);
-  max-width: 100%;
+  width: 100%;
+  max-width: var(--max-width);
 }
 
 .top {
@@ -24,12 +24,59 @@
 }
 
 .card {
+  position: relative;
   padding: 2rem;
+  margin: 1rem;
   border-radius: var(--border-radius);
-  background: rgba(var(--card-rgb), 0);
-  border: 1px solid rgba(var(--card-border-rgb), 0);
+  background: rgba(var(--card-rgb), 0.1);
+  border: 1px solid rgba(var(--card-border-rgb), 0.1);
   transition: background 200ms, border 200ms;
   backdrop-filter: blur(10px);
+  transform: translateZ(0);
+  overflow: hidden;
+  box-shadow: 0px 2px 8px -1px #0000001a;
+}
+
+.card::before,
+.card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -10%;
+}
+
+/* Conic Gradient Animation */
+.card::before {
+  opacity: 0;
+  animation: 6s rotate linear infinite;
+  width: 150%;
+  height: 70%;
+  background: var(--tile-border);
+}
+
+/* Inner Square */
+.card::after {
+  inset: 0;
+  padding: 1px;
+  border-radius: var(--border-radius);
+  background: linear-gradient(
+    to bottom right,
+    rgba(var(--tile-start-rgb), 1),
+    rgba(var(--tile-end-rgb), 1)
+  );
+  background-clip: content-box;
+}
+
+.card:nth-child(1)::before {
+  animation-delay: 2.5s;
+}
+
+.card:nth-child(2)::before {
+  animation-delay: 4.5s;
+}
+
+.card:nth-child(3)::before {
+  animation-delay: 6.5s;
 }
 
 .card span {
@@ -38,8 +85,20 @@
 }
 
 .card h2 {
-  font-weight: 600;
+  font-weight: 300;
+  font-size: 1.4rem;
+  display: flex;
+  gap: 8px;
+  align-items: center;
   margin-bottom: 0.7rem;
+}
+
+.card svg {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  box-shadow: 0px 2px 8px -1px #0000001a;
+  border-radius: 4px;
 }
 
 .card p {
@@ -201,6 +260,15 @@
 
 /* Mobile and Tablet */
 @media (max-width: 1023px) {
+  .center {
+    min-height: 50vh;
+  }
+
+  .footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .logotype {
     font-size: 22px;
   }
@@ -216,12 +284,15 @@
   }
 
   .grid {
+    padding: 0;
     grid-template-columns: 1fr;
-    max-width: 320px;
+    width: 100%;
   }
 
   .card {
-    padding: 1rem 2.5rem;
+    margin: 1rem 0;
+    padding: 2rem;
+    width: 100%;
   }
 
   .card h2 {
@@ -235,10 +306,6 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .vercelLogo {
-    filter: invert(1);
-  }
-
   .logo,
   .logoContainer img {
     filter: drop-shadow(0 0 0.3rem #ffffff70);
@@ -246,10 +313,23 @@
 }
 
 @keyframes rotate {
-  from {
+  0% {
+    opacity: 1;
     transform: rotate(360deg);
+    transform-origin: center center;
   }
-  to {
+  40% {
+    opacity: 0.9;
+  }
+  50% {
     transform: rotate(0deg);
+    transform-origin: center center;
+    opacity: 0.3;
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
   }
 }

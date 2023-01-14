@@ -2,6 +2,9 @@ import Image from "next/image";
 import { Inter } from "@next/font/google";
 import styles from "./page.module.css";
 import clsx from "clsx";
+import { ClobbrAppLogo } from "@/components/clobbr-app-logo";
+import { CrontapAppLogo } from "@/components/crontap-app-logo";
+import { NextAppLogo } from "@/components/next-app-logo";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,10 +40,11 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <h2 className={inter.className}>
+            <h2>
+              <NextAppLogo />
               Apihustle <span>-&gt;</span>
             </h2>
-            <p className={inter.className}>
+            <p>
               A collection of tools to test, improve and get to know your API
               inside and out.
             </p>
@@ -52,12 +56,11 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <h2 className={inter.className}>
+            <h2>
+              <ClobbrAppLogo />
               Clobbr <span>-&gt;</span>
             </h2>
-            <p className={inter.className}>
-              The app & CLI tool to test API endpoint speed.
-            </p>
+            <p>The app & CLI tool to test API endpoint speed.</p>
           </a>
 
           <a
@@ -66,24 +69,17 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <h2 className={inter.className}>
+            <h2>
+              <CrontapAppLogo />
               Crontap <span>-&gt;</span>
             </h2>
-            <p className={inter.className}>
+            <p>
               Schedule recurring API calls using cron or huamn-readable syntax.
             </p>
           </a>
         </div>
 
         <div className={styles.footer}>
-          <a
-            href="https://github.com/parsecph"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Github
-          </a>
-
           <a
             href="https://twitter.com/apihustletools"
             target="_blank"
@@ -106,6 +102,14 @@ export default function Home() {
             rel="noopener noreferrer"
           >
             @crontapp
+          </a>
+
+          <a
+            href="https://github.com/parsecph"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Github
           </a>
         </div>
       </div>
