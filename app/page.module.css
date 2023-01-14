@@ -24,11 +24,12 @@
 }
 
 .card {
-  padding: 1rem 1.2rem;
+  padding: 2rem;
   border-radius: var(--border-radius);
   background: rgba(var(--card-rgb), 0);
   border: 1px solid rgba(var(--card-border-rgb), 0);
   transition: background 200ms, border 200ms;
+  backdrop-filter: blur(10px);
 }
 
 .card span {
@@ -180,7 +181,7 @@
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
     background: rgba(var(--card-rgb), 0.1);
-    border: 1px solid rgba(var(--card-border-rgb), 0.15);
+    border: 1px solid rgba(var(--card-border-rgb), 0.1);
   }
 
   .card:hover span {
