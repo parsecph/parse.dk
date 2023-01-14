@@ -1,0 +1,23 @@
+<svg viewBox="0 0 116 121"
+  xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" fill-rule="evenodd">
+    <g transform="translate(15 8)">
+      <rect fill="#EE7259" width="63" height="63" rx="31.5"/>
+      <rect x="5" y="5" width="53" height="53" rx="26.5"/>
+      <rect fill="#DEDEDE" x="10" y="10" width="43" height="43" rx="21.5"/>
+      <rect fill="#FFF" x="15" y="15" width="33" height="33" rx="16.5"/>
+    </g>
+    <g transform="translate(35)">
+      <path d="M81 39.055C81 61.546 67.163 77.76 45.864 77.76H34.236c-8.767 0-13.332 12.77-13.695 38.31a5 5 0 0 1-5 4.929H5a5 5 0 0 1-5-5V5a5 5 0 0 1 5-5h40.397C67.94 0 81 15.343 81 39.055Z" fill="#78D8FF"/>
+      <circle fill="#FFF" cx="38.5" cy="38.5" r="32.5"/>
+      <circle fill="#828181" cx="39" cy="39" r="13"/>
+      <circle fill="#DEDEDE" cx="39" cy="39" r="25"/>
+      <circle fill="#FFF" cx="39" cy="39" r="18"/>
+      <circle fill="#EE7259" cx="39" cy="39" r="10"/>
+    </g>
+    <path fill="#FFF" d="M33 10h2v60h-2z"/>
+    <text transform="rotate(-90 5.5 38)" font-family="Chalet-NewYorkNineteenEighty, Chalet" font-size="11" font-weight="bold" fill="#78D8FF">
+      <tspan x="-26.5" y="41.5">copenhagen</tspan>
+    </text>
+  </g>
+</svg>
