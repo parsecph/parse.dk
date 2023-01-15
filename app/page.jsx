@@ -112,6 +112,8 @@ export default function Home() {
             Github
           </a>
         </div>
+
+        <div className={styles.cvr}>Registered in Denmark, DK39296675</div>
       </div>
     </main>
   );
