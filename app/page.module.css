@@ -21,6 +21,8 @@
   flex-wrap: wrap;
   max-width: var(--max-width);
   gap: 3rem;
+  flex-shrink: 0;
+  margin: 3rem 0;
 }
 
 .card {
@@ -48,7 +50,7 @@
 /* Conic Gradient Animation */
 .card::before {
   opacity: 0;
-  animation: 6s rotate linear infinite;
+  animation: 6s rotate linear forwards;
   width: 150%;
   height: 70%;
   background: var(--tile-border);
@@ -77,6 +79,18 @@
 
 .card:nth-child(3)::before {
   animation-delay: 6.5s;
+}
+
+.cardRowTwo:nth-child(1)::before {
+  animation-delay: 8.5s;
+}
+
+.cardRowTwo:nth-child(2)::before {
+  animation-delay: 10.5s;
+}
+
+.cardRowTwo:nth-child(3)::before {
+  animation-delay: 12.5s;
 }
 
 .card span {

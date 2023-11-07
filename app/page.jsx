@@ -35,22 +35,6 @@ export default function Home() {
       <div>
         <div className={styles.grid}>
           <a
-            href="https://apihustle.com"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              <NextAppLogo />
-              Apihustle <span>-&gt;</span>
-            </h2>
-            <p>
-              A collection of tools to test, improve and get to know your API
-              inside and out.
-            </p>
-          </a>
-
-          <a
             href="https://clobbr.app"
             className={styles.card}
             target="_blank"
@@ -77,6 +61,60 @@ export default function Home() {
               Schedule recurring API calls using cron or huamn-readable syntax.
             </p>
           </a>
+
+          <a
+            href="https://apihustle.com"
+            className={styles.card}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <h2>
+              <NextAppLogo />
+              Apihustle <span>-&gt;</span>
+            </h2>
+            <p>
+              A collection of tools to test, improve and get to know your API
+              inside and out.
+            </p>
+          </a>
+        </div>
+
+        <div className={styles.grid}>
+          <a
+            href="https://shipixen.com"
+            className={[styles.card, styles.cardRowTwo].join(" ")}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <h2>
+              Shipixen <span>-&gt;</span>
+            </h2>
+            <p>Customized boilerplates in minutes.</p>
+          </a>
+
+          <a
+            href="https://hunted.space"
+            className={[styles.card, styles.cardRowTwo].join(" ")}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <h2>
+              Hunted.space <span>-&gt;</span>
+            </h2>
+            <p>Product Hunt statistics and live dashboards.</p>
+          </a>
+
+          <a
+            href="https://tool.crontap.com/cronjob-debugger/multiple"
+            className={[styles.card, styles.cardRowTwo].join(" ")}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <h2>
+              CronTool <span>-&gt;</span>
+            </h2>
+            <p>Debug & visualize cron expressions.</p>
+          </a>
         </div>
 
         <div className={styles.footer}>
@@ -102,6 +140,14 @@ export default function Home() {
             rel="noopener noreferrer"
           >
             @crontapp
+          </a>
+
+          <a
+            href="https://twitter.com/shipixen"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @shipixen
           </a>
 
           <a
