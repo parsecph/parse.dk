@@ -116,7 +116,7 @@ export function LiquidBlob({
     const restScale = portrait ? 0.5 : 1;
 
     const targetX = lerp(restX, portrait ? 0.9 : 3.4, k);
-    const targetY = lerp(restY, portrait ? 2.1 : -0.3, k);
+    const targetY = lerp(restY, portrait ? 2.7 : -0.3, k);
     const targetZ = lerp(restZ, portrait ? -3 : -3.6, k);
     const targetScale = lerp(restScale, portrait ? 0.45 : 0.85, k);
 
