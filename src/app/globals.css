@@ -126,7 +126,7 @@ h3 {
     filter: saturate(0.85);
   }
   &:is(:where(.group):hover *) {
-    filter: saturate(1);
+    filter: none;
   }
 }
 
