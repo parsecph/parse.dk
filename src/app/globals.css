@@ -60,6 +60,12 @@ body {
   overflow-x: clip;
 }
 
+h1,
+h2,
+h3 {
+  text-shadow: 0 2px 28px rgba(5, 5, 7, 0.85);
+}
+
 ::selection {
   background: color-mix(in oklab, var(--color-coral) 70%, transparent);
   color: white;
