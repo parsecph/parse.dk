@@ -181,7 +181,6 @@ const productInputs: ProductInput[] = [
   },
   {
     id: "apihustle",
-    logoBleed: true,
     name: "Apihustle",
     url: "https://apihustle.com",
     host: "apihustle.com",
