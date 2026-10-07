@@ -6,7 +6,7 @@ import { useRef, type ReactNode } from "react";
 /** Children drift toward the pointer while it is nearby, then spring home. */
 export function Magnetic({
   children,
-  strength = 0.35,
+  strength = 0.45,
   className = "",
 }: {
   children: ReactNode;
@@ -36,7 +36,7 @@ export function Magnetic({
       onPointerMove={onMove}
       onPointerLeave={onLeave}
       style={{ x: sx, y: sy }}
-      className={`inline-block motion-reduce:transform-none ${className}`}
+      className={`-m-3 inline-block p-3 motion-reduce:transform-none ${className}`}
     >
       {children}
     </motion.div>

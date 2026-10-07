@@ -111,7 +111,11 @@ function Lights() {
   );
 }
 
-export default function Scene() {
+export default function Scene({
+  labelLayer,
+}: {
+  labelLayer: React.RefObject<HTMLDivElement>;
+}) {
   const scroll = useScrollProgress();
   const pointer = usePointer();
   const reduced = useReducedMotion();
@@ -140,7 +144,7 @@ export default function Scene() {
       <FluidBackdrop scroll={scroll} pointer={pointer} reduced={reduced} />
       <LiquidBlob scroll={scroll} pointer={pointer} reduced={reduced} />
       <Suspense fallback={null}>
-        <LogoTiles scroll={scroll} reduced={reduced} />
+        <LogoTiles scroll={scroll} reduced={reduced} labelLayer={labelLayer} />
       </Suspense>
       <Sparkles
         count={160}

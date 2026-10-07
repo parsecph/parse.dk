@@ -57,8 +57,8 @@ uniform float uAmp;
 
 float blobDisp(vec3 p) {
   vec3 n = normalize(p);
-  float swell = snoise(n * 1.35 + vec3(0.0, uTime * 0.22, uTime * 0.11)) * 0.26;
-  float shimmer = snoise(n * 3.6 - vec3(uTime * 0.35, 0.0, uTime * 0.18)) * 0.055;
+  float swell = snoise(n * 1.25 + vec3(0.0, uTime * 0.22, uTime * 0.11)) * 0.2;
+  float shimmer = snoise(n * 3.2 - vec3(uTime * 0.35, 0.0, uTime * 0.18)) * 0.03;
   float d = acos(clamp(dot(n, normalize(uHit)), -1.0, 1.0));
   float ripple = uHitStrength * sin(d * 16.0 - uTime * 7.0) * exp(-d * 3.2) * 0.14;
   float dent = -uHitStrength * exp(-d * 6.0) * 0.18;

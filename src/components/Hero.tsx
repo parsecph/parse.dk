@@ -25,7 +25,8 @@ export function Hero() {
             <br />
             <SplitWords
               text="Then we ship it."
-              delay={0.38}
+              delay={0.42}
+              whole
               className="bg-gradient-to-r from-sky via-fog to-coral-2 bg-clip-text text-transparent"
             />
           </h1>

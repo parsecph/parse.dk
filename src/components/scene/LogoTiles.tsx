@@ -42,12 +42,14 @@ function Tile({
   total,
   scroll,
   reduced,
+  labelLayer,
 }: {
   product: Product;
   index: number;
   total: number;
   scroll: React.RefObject<ScrollState>;
   reduced: React.RefObject<boolean>;
+  labelLayer: React.RefObject<HTMLDivElement>;
 }) {
   const group = useRef<THREE.Group>(null!);
   const inner = useRef<THREE.Group>(null!);
@@ -89,16 +91,16 @@ function Tile({
     const spread = smooth(vh / 1.6);
     const radius = portrait
       ? lerp(1.5, 3.3, spread) + progress * 0.6
-      : lerp(2.9, 5.6, spread) + progress * 1.2;
+      : lerp(3.0, 5.6, spread) + progress * 1.2;
     const angle = baseAngle + t * 0.07 * slow + vh * 0.45;
 
     group.current.position.set(
       Math.cos(angle) * radius,
       lift * (portrait ? 0.5 : 1) + Math.sin(angle * 2 + t * 0.3 * slow) * 0.25 - vh * 0.3 + spread,
-      Math.sin(angle) * radius * 0.5 - 1.4,
+      Math.sin(angle) * radius * 0.65 - 1.6,
     );
 
-    const targetScale = (portrait ? 0.68 : 1) * (hovered ? 1.35 : 1);
+    const targetScale = (portrait ? 0.68 : 1) * (hovered ? 1.25 : 1);
     const s = damp(group.current.scale.x, targetScale, 8, dt);
     group.current.scale.setScalar(s);
 
@@ -166,7 +168,13 @@ function Tile({
         ))}
 
         {hovered && (
-          <Html center position={[0, -0.85, 0]} zIndexRange={[5, 0]} style={{ pointerEvents: "none" }}>
+          <Html
+            center
+            position={[0, -0.85, 0]}
+            portal={labelLayer}
+            zIndexRange={[30, 20]}
+            style={{ pointerEvents: "none" }}
+          >
             <div className="flex -translate-y-1 items-center gap-2 whitespace-nowrap rounded-full border border-white/15 bg-ink/85 px-3 py-1.5 text-xs text-fog shadow-lg backdrop-blur">
               <span className="font-semibold">{product.name}</span>
               <span className="text-fog-3">{product.host} ↗</span>
@@ -181,9 +189,11 @@ function Tile({
 export function LogoTiles({
   scroll,
   reduced,
+  labelLayer,
 }: {
   scroll: React.RefObject<ScrollState>;
   reduced: React.RefObject<boolean>;
+  labelLayer: React.RefObject<HTMLDivElement>;
 }) {
   const group = useRef<THREE.Group>(null!);
   const { viewport } = useThree();
@@ -191,7 +201,7 @@ export function LogoTiles({
 
   useFrame((_, dt) => {
     const k = smooth(scroll.current.vh / 1.6);
-    const targetX = portrait ? 0 : lerp(2.1, 0.6, k);
+    const targetX = portrait ? 0 : lerp(2.6, 0.6, k);
     const targetY = portrait ? lerp(2.2, 0.4, k) : 0;
     group.current.position.x = damp(group.current.position.x, targetX, 3, dt);
     group.current.position.y = damp(group.current.position.y, targetY, 3, dt);
@@ -200,7 +210,15 @@ export function LogoTiles({
   return (
     <group ref={group}>
       {products.map((p, i) => (
-        <Tile key={p.id} product={p} index={i} total={products.length} scroll={scroll} reduced={reduced} />
+        <Tile
+          key={p.id}
+          product={p}
+          index={i}
+          total={products.length}
+          scroll={scroll}
+          reduced={reduced}
+          labelLayer={labelLayer}
+        />
       ))}
     </group>
   );

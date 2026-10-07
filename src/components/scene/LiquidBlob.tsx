@@ -110,12 +110,12 @@ export function LiquidBlob({
     uniforms.uTime.value = t * slow;
     uniforms.uAmp.value = reduced.current ? 0.6 : 1;
 
-    const restX = portrait ? 0 : 2.1;
+    const restX = portrait ? 0 : 2.6;
     const restY = portrait ? 2.3 : 0.1;
     const restZ = portrait ? -0.6 : 0;
     const restScale = portrait ? 0.5 : 1;
 
-    const targetX = lerp(restX, portrait ? 0.9 : 3.2, k);
+    const targetX = lerp(restX, portrait ? 0.9 : 3.4, k);
     const targetY = lerp(restY, portrait ? 2.1 : -0.3, k);
     const targetZ = lerp(restZ, portrait ? -3 : -3.6, k);
     const targetScale = lerp(restScale, portrait ? 0.45 : 0.85, k);
@@ -151,7 +151,7 @@ export function LiquidBlob({
   return (
     <group ref={group}>
       <mesh ref={mesh} material={material}>
-        <icosahedronGeometry args={[1.55, 96]} />
+        <icosahedronGeometry args={[1.35, 96]} />
       </mesh>
     </group>
   );
