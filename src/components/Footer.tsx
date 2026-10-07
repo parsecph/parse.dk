@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="relative z-10 px-4 pb-10 pt-20 sm:px-6">
       <div className="mx-auto max-w-6xl">
-        <div className="glass noise rounded-[2rem] p-8 sm:p-12">
+        <div className="glass noise relative rounded-[2rem] p-8 sm:p-12">
           <div className="grid gap-10 lg:grid-cols-[1fr_2fr]">
             <div>
               <div className="flex items-center gap-3">

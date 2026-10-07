@@ -81,7 +81,7 @@ export function Studio() {
           <ul className="grid gap-4">
             {principles.map((p, i) => (
               <Reveal key={p.title} delay={i * 0.08}>
-                <li className="glass noise flex gap-5 rounded-3xl p-6">
+                <li className="glass noise relative flex gap-5 rounded-3xl p-6">
                   <div className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/5">
                     <p.icon className={`size-6 ${p.accent}`} strokeWidth={2.2} />
                   </div>

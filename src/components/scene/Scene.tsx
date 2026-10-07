@@ -163,14 +163,19 @@ function Orb({
     const speed = reduced.current ? 0.1 : 1;
     const spread = smooth(vh / 1.6);
     const radius = portrait
-      ? lerp(1.7, 3.2, spread) + progress * 0.6
+      ? lerp(1.3, 3.2, spread) + progress * 0.6
       : lerp(2.6, 5.2, spread) + progress * 1.2;
     const angle = baseAngle + t * 0.08 * speed + vh * 0.5;
+    const wobble = portrait ? 0.2 : 0.35;
     ref.current.position.set(
       Math.cos(angle) * radius,
-      lift + Math.sin(angle * 2 + t * 0.4 * speed) * 0.35 - vh * 0.35 + spread,
+      lift * (portrait ? 0.5 : 1) +
+        Math.sin(angle * 2 + t * 0.4 * speed) * wobble -
+        vh * 0.35 +
+        spread,
       Math.sin(angle) * radius * 0.55 - 1.5,
     );
+    ref.current.scale.setScalar(portrait ? 0.75 : 1);
     ref.current.rotation.x = t * 0.5 * speed + index;
     ref.current.rotation.y = t * 0.35 * speed + index;
   });
@@ -207,7 +212,7 @@ function OrbRing({
     // The ring starts centred on the knot and widens to fill the page.
     const k = smooth(scroll.current.vh / 1.6);
     const targetX = portrait ? 0 : lerp(1.9, 0.6, k);
-    const targetY = portrait ? lerp(1.6, 0.4, k) : 0;
+    const targetY = portrait ? lerp(2.2, 0.4, k) : 0;
     group.current.position.x = damp(group.current.position.x, targetX, 3, dt);
     group.current.position.y = damp(group.current.position.y, targetY, 3, dt);
   });
