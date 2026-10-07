@@ -63,14 +63,18 @@ function HeroKnot({
     const k = smooth(vh / 1.4);
     const speed = reduced.current ? 0.15 : 1;
 
+    // Rest: beside the headline on desktop, above it on phones.
+    // Scrolled: drift back and to the right so it never sits under copy.
     const restX = portrait ? 0 : 1.9;
-    const restY = portrait ? 1.35 : 0.1;
-    const restScale = portrait ? 0.62 : 1;
+    const restY = portrait ? 2.3 : 0.1;
+    const restZ = portrait ? -0.6 : 0;
+    const restScale = portrait ? 0.5 : 1;
 
-    const targetX = lerp(restX, -2.6, k);
-    const targetY = lerp(restY, 0.6, k) + Math.sin(t * 0.6) * 0.08 * speed;
-    const targetZ = lerp(0, -2.4, k);
-    const targetScale = lerp(restScale, portrait ? 0.45 : 0.7, k);
+    const targetX = lerp(restX, portrait ? 0.9 : 3.1, k);
+    const targetY =
+      lerp(restY, portrait ? 2.1 : -0.3, k) + Math.sin(t * 0.6) * 0.08 * speed;
+    const targetZ = lerp(restZ, portrait ? -3 : -3.5, k);
+    const targetScale = lerp(restScale, portrait ? 0.45 : 0.85, k);
 
     group.current.position.x = damp(group.current.position.x, targetX, 3, dt);
     group.current.position.y = damp(group.current.position.y, targetY, 3, dt);
@@ -148,6 +152,8 @@ function Orb({
   reduced: React.RefObject<boolean>;
 }) {
   const ref = useRef<THREE.Group>(null!);
+  const { viewport } = useThree();
+  const portrait = viewport.aspect < 1;
   const baseAngle = (index / total) * Math.PI * 2;
   const lift = useMemo(() => Math.sin(index * 12.9898) * 0.9, [index]);
 
@@ -156,7 +162,9 @@ function Orb({
     const { vh, progress } = scroll.current;
     const speed = reduced.current ? 0.1 : 1;
     const spread = smooth(vh / 1.6);
-    const radius = lerp(2.9, 5.2, spread) + progress * 1.2;
+    const radius = portrait
+      ? lerp(1.7, 3.2, spread) + progress * 0.6
+      : lerp(2.6, 5.2, spread) + progress * 1.2;
     const angle = baseAngle + t * 0.08 * speed + vh * 0.5;
     ref.current.position.set(
       Math.cos(angle) * radius,
@@ -193,12 +201,18 @@ function OrbRing({
   reduced: React.RefObject<boolean>;
 }) {
   const group = useRef<THREE.Group>(null!);
-  useFrame(() => {
-    group.current.rotation.x = 0.55;
-    group.current.rotation.z = 0.12;
+  const { viewport } = useThree();
+  const portrait = viewport.aspect < 1;
+  useFrame((_, dt) => {
+    // The ring starts centred on the knot and widens to fill the page.
+    const k = smooth(scroll.current.vh / 1.6);
+    const targetX = portrait ? 0 : lerp(1.9, 0.6, k);
+    const targetY = portrait ? lerp(1.6, 0.4, k) : 0;
+    group.current.position.x = damp(group.current.position.x, targetX, 3, dt);
+    group.current.position.y = damp(group.current.position.y, targetY, 3, dt);
   });
   return (
-    <group ref={group}>
+    <group ref={group} rotation={[0.55, 0, 0.12]}>
       {products.map((p, i) => (
         <Orb
           key={p.id}
