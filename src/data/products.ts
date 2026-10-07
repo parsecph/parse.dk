@@ -1,0 +1,252 @@
+import type { LucideIcon } from "lucide-react";
+import {
+  BadgePercent,
+  Brain,
+  CalendarClock,
+  ChartColumn,
+  Gauge,
+  Heart,
+  Hourglass,
+  Landmark,
+  LayoutTemplate,
+  Mic,
+  Radar,
+  Repeat,
+  Ship,
+  WandSparkles,
+  Wrench,
+} from "lucide-react";
+
+export type Category = "Build" | "APIs" | "AI" | "Makers" | "Life";
+
+export type Accent = "coral" | "sky" | "violet" | "mint" | "gold";
+
+export type Shape = "icosahedron" | "box" | "torus" | "octahedron" | "capsule";
+
+export interface Product {
+  id: string;
+  name: string;
+  url: string;
+  host: string;
+  /** One line. The whole pitch. */
+  tagline: string;
+  /** One more sentence, plain words. */
+  blurb: string;
+  icon: LucideIcon;
+  category: Category;
+  accent: Accent;
+  shape: Shape;
+  featured?: boolean;
+}
+
+export const products: Product[] = [
+  {
+    id: "pageai",
+    name: "Page AI",
+    url: "https://pageai.pro",
+    host: "pageai.pro",
+    tagline: "Say what you want. Get a website.",
+    blurb: "One prompt in. A finished site out. Edit anything, then publish.",
+    icon: WandSparkles,
+    category: "Build",
+    accent: "coral",
+    shape: "icosahedron",
+    featured: true,
+  },
+  {
+    id: "cadscene",
+    name: "CadScene",
+    url: "https://cadscene.com",
+    host: "cadscene.com",
+    tagline: "Your drawing, rendered like a photo.",
+    blurb: "Upload a plan or model. Get photoreal architecture renders in seconds.",
+    icon: Landmark,
+    category: "Build",
+    accent: "sky",
+    shape: "box",
+    featured: true,
+  },
+  {
+    id: "pageui",
+    name: "Page UI",
+    url: "https://pageui.dev",
+    host: "pageui.dev",
+    tagline: "Landing page parts. Copy, paste, launch.",
+    blurb: "Ready-made React components for pages that look finished on day one.",
+    icon: LayoutTemplate,
+    category: "Build",
+    accent: "violet",
+    shape: "octahedron",
+  },
+  {
+    id: "clobbr",
+    name: "Clobbr",
+    url: "https://clobbr.app",
+    host: "clobbr.app",
+    tagline: "See how fast your API really is.",
+    blurb: "Load and speed tests from your desktop or the command line.",
+    icon: Gauge,
+    category: "APIs",
+    accent: "mint",
+    shape: "torus",
+  },
+  {
+    id: "crontap",
+    name: "Crontap",
+    url: "https://crontap.com",
+    host: "crontap.com",
+    tagline: "Call any API on a schedule.",
+    blurb: "Set it once. It runs every minute, hour or month. You get notified.",
+    icon: CalendarClock,
+    category: "APIs",
+    accent: "sky",
+    shape: "capsule",
+  },
+  {
+    id: "hunted",
+    name: "Hunted.space",
+    url: "https://hunted.space",
+    host: "hunted.space",
+    tagline: "Watch Product Hunt launches, live.",
+    blurb: "Every launch, every vote, as it happens. Spot what is taking off.",
+    icon: Radar,
+    category: "Makers",
+    accent: "coral",
+    shape: "icosahedron",
+  },
+  {
+    id: "morningmakershow",
+    name: "Morning Maker Show",
+    url: "https://morningmakershow.com",
+    host: "morningmakershow.com",
+    tagline: "A show for people who make things.",
+    blurb: "Honest talks with indie makers. On YouTube and wherever you get podcasts.",
+    icon: Mic,
+    category: "Makers",
+    accent: "gold",
+    shape: "capsule",
+  },
+  {
+    id: "rarebigdeal",
+    name: "Rare Big Deal",
+    url: "https://rarebigdeal.com",
+    host: "rarebigdeal.com",
+    tagline: "Great software. Rare prices.",
+    blurb: "Hand-picked deals on SaaS tools. No noise, just the good ones.",
+    icon: BadgePercent,
+    category: "Makers",
+    accent: "violet",
+    shape: "box",
+  },
+  {
+    id: "mrrartpro",
+    name: "MRR Art Pro",
+    url: "https://mrrartpro.com",
+    host: "mrrartpro.com",
+    tagline: "Turn your numbers into ASCII charts.",
+    blurb: "Paste your revenue. Get a chart made of text you can post anywhere.",
+    icon: ChartColumn,
+    category: "Makers",
+    accent: "mint",
+    shape: "octahedron",
+  },
+  {
+    id: "crontool",
+    name: "CronTool",
+    url: "https://crontool.cc",
+    host: "crontool.cc",
+    tagline: "Cron, in plain English.",
+    blurb: "Build and check cron expressions. See exactly when they will run.",
+    icon: Hourglass,
+    category: "APIs",
+    accent: "gold",
+    shape: "torus",
+  },
+  {
+    id: "apihustle",
+    name: "Apihustle",
+    url: "https://apihustle.com",
+    host: "apihustle.com",
+    tagline: "Every tool your API needs.",
+    blurb: "Test it. Schedule it. Understand it. One suite, built by one team.",
+    icon: Wrench,
+    category: "APIs",
+    accent: "coral",
+    shape: "box",
+  },
+  {
+    id: "saventify",
+    name: "Saventify",
+    url: "https://saventify.com",
+    host: "saventify.com",
+    tagline: "Wedding invitations that count the guests.",
+    blurb: "Beautiful digital invites. RSVPs collected for you, in one place.",
+    icon: Heart,
+    category: "Life",
+    accent: "coral",
+    shape: "capsule",
+  },
+  {
+    id: "llmboss",
+    name: "LLM Boss",
+    url: "https://llm-boss.com",
+    host: "llm-boss.com",
+    tagline: "Which AI is best? See the numbers.",
+    blurb: "Frontier models, side by side, on the benchmarks that matter.",
+    icon: Brain,
+    category: "AI",
+    accent: "violet",
+    shape: "icosahedron",
+    featured: true,
+  },
+  {
+    id: "ralphloop",
+    name: "Ralph Loop",
+    url: "https://ralphloop.sh",
+    host: "ralphloop.sh",
+    tagline: "An AI that codes while you sleep.",
+    blurb: "Give it a goal. It keeps working, for hours or days, until it is done.",
+    icon: Repeat,
+    category: "AI",
+    accent: "sky",
+    shape: "torus",
+    featured: true,
+  },
+  {
+    id: "shipixen",
+    name: "Shipixen",
+    url: "https://shipixen.com",
+    host: "shipixen.com",
+    tagline: "A Next.js app, ready in minutes.",
+    blurb: "Pick what you need. Download a clean boilerplate. Start building.",
+    icon: Ship,
+    category: "Build",
+    accent: "mint",
+    shape: "octahedron",
+    featured: true,
+  },
+];
+
+export const categories: { id: Category; label: string; line: string }[] = [
+  { id: "Build", label: "Build", line: "Sites, pages and renders." },
+  { id: "APIs", label: "APIs", line: "Test, schedule, understand." },
+  { id: "AI", label: "AI", line: "Agents and benchmarks." },
+  { id: "Makers", label: "Makers", line: "Launches, deals and a show." },
+  { id: "Life", label: "Life", line: "Because weddings need RSVPs." },
+];
+
+export const accentHex: Record<Accent, string> = {
+  coral: "#ee7259",
+  sky: "#78d8ff",
+  violet: "#a78bfa",
+  mint: "#6ee7b7",
+  gold: "#fbbf24",
+};
+
+export const socials = [
+  { label: "GitHub", handle: "parsecph", url: "https://github.com/parsecph" },
+  { label: "X", handle: "@shipixen", url: "https://twitter.com/shipixen" },
+  { label: "X", handle: "@apihustletools", url: "https://twitter.com/apihustletools" },
+  { label: "X", handle: "@clobbrapp", url: "https://twitter.com/clobbrapp" },
+  { label: "X", handle: "@crontapp", url: "https://twitter.com/crontapp" },
+];
