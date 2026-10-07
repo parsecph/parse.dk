@@ -80,6 +80,11 @@ function Tile({
   useCursor(hovered);
   const { viewport } = useThree();
   const portrait = viewport.aspect < 1;
+  // No hover device means no way to bring colour back, so rest nearly saturated.
+  const restSat = useMemo(
+    () => (typeof window !== "undefined" && window.matchMedia("(hover: none)").matches ? 0.85 : 0.1),
+    [],
+  );
 
   const texture = useTexture(product.logo, (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
@@ -110,13 +115,13 @@ function Tile({
           map: { value: texture },
           alphaMap: { value: mask },
           uUseMask: { value: mask ? 1 : 0 },
-          uSat: { value: 0.1 },
+          uSat: { value: restSat },
         },
         vertexShader: logoVertex,
         fragmentShader: logoFragment,
         transparent: true,
       }),
-    [texture, mask],
+    [texture, mask, restSat],
   );
 
   const baseAngle = (index / total) * Math.PI * 2;
@@ -152,7 +157,7 @@ function Tile({
     inner.current.rotation.z = damp(inner.current.rotation.z, hovered ? 0 : Math.sin(t * 0.3 + index) * 0.08, 8, dt);
 
     const sat = logoFront.current.material.uniforms.uSat as { value: number };
-    sat.value = damp(sat.value, hovered ? 1 : 0.1, hovered ? 7 : 3, dt);
+    sat.value = damp(sat.value, hovered ? 1 : restSat, hovered ? 7 : 3, dt);
     bodyRef.current.emissiveIntensity = damp(bodyRef.current.emissiveIntensity, hovered ? 0.3 : 0, 7, dt);
   });
 

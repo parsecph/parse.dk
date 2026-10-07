@@ -40,7 +40,7 @@ export function LogoBadge({
         width={s.px}
         height={s.px}
         unoptimized
-        className={`relative size-full saturate-[.12] transition-[transform,filter] duration-500 ease-out group-hover:scale-110 group-hover:saturate-100 ${
+        className={`logo-rest relative size-full group-hover:scale-110 ${
           bleed ? "rounded-[inherit] object-cover" : "object-contain group-hover:-rotate-3"
         }`}
       />

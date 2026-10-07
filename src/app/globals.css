@@ -115,6 +115,21 @@ h3 {
     --shine-c 0.7s ease;
 }
 
+/* Logos rest desaturated and take colour when their `group` is hovered.
+   Without a hover device there is nothing to wait for, so keep most colour. */
+@utility logo-rest {
+  filter: saturate(0.12);
+  transition:
+    filter 0.5s ease,
+    transform 0.5s ease;
+  @media (hover: none) {
+    filter: saturate(0.85);
+  }
+  &:is(:where(.group):hover *) {
+    filter: saturate(1);
+  }
+}
+
 /* Opaque enough to keep copy readable even where backdrop-filter is unavailable. */
 @utility glass {
   background:

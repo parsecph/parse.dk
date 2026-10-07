@@ -62,7 +62,7 @@ export function Footer() {
                         width={16}
                         height={16}
                         unoptimized
-                        className={`size-4 shrink-0 object-contain opacity-80 saturate-0 transition group-hover:opacity-100 group-hover:saturate-100 ${p.logoBleed ? "rounded-[3px]" : ""}`}
+                        className={`logo-rest size-4 shrink-0 object-contain opacity-80 group-hover:opacity-100 ${p.logoBleed ? "rounded-[3px]" : ""}`}
                       />
                       <span className="font-medium">{p.name}</span>
                       <span className="truncate text-fog-3">{p.host}</span>
