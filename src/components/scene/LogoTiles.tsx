@@ -95,7 +95,7 @@ function Tile({
     const angle = baseAngle + t * 0.07 * slow + vh * 0.45;
 
     group.current.position.set(
-      Math.cos(angle) * radius,
+      Math.cos(angle) * radius * (portrait ? 1 : 0.9),
       lift * (portrait ? 0.5 : 1) + Math.sin(angle * 2 + t * 0.3 * slow) * 0.25 - vh * 0.3 + spread,
       Math.sin(angle) * radius * 0.65 - 1.6,
     );
@@ -201,7 +201,7 @@ export function LogoTiles({
 
   useFrame((_, dt) => {
     const k = smooth(scroll.current.vh / 1.6);
-    const targetX = portrait ? 0 : lerp(2.6, 0.6, k);
+    const targetX = portrait ? 0 : lerp(2.95, 0.6, k);
     const targetY = portrait ? lerp(2.2, 0.4, k) : 0;
     group.current.position.x = damp(group.current.position.x, targetX, 3, dt);
     group.current.position.y = damp(group.current.position.y, targetY, 3, dt);

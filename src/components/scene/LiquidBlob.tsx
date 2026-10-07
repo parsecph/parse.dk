@@ -110,7 +110,7 @@ export function LiquidBlob({
     uniforms.uTime.value = t * slow;
     uniforms.uAmp.value = reduced.current ? 0.6 : 1;
 
-    const restX = portrait ? 0 : 2.6;
+    const restX = portrait ? 0 : 2.85;
     const restY = portrait ? 2.3 : 0.1;
     const restZ = portrait ? -0.6 : 0;
     const restScale = portrait ? 0.5 : 1;
