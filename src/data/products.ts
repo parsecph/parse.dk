@@ -32,16 +32,26 @@ export interface Product {
   tagline: string;
   /** One more sentence, plain words. */
   blurb: string;
+  /** Legacy fallback glyph; product visuals use the real logo. */
   icon: LucideIcon;
+  /** Path under /public to the product's own logo (highest-res available). */
+  logo: string;
+  /** Set when the mark is dark-on-light and needs a light tile behind it. */
+  logoOnLight?: boolean;
+  /** Set when the logo is a full-bleed app icon that should fill its tile. */
+  logoBleed?: boolean;
   category: Category;
   accent: Accent;
   shape: Shape;
   featured?: boolean;
 }
 
-export const products: Product[] = [
+type ProductInput = Omit<Product, "logo"> & { logo?: string };
+
+const productInputs: ProductInput[] = [
   {
     id: "pageai",
+    logoBleed: true,
     name: "Page AI",
     url: "https://pageai.pro",
     host: "pageai.pro",
@@ -55,6 +65,7 @@ export const products: Product[] = [
   },
   {
     id: "cadscene",
+    logoBleed: true,
     name: "CadScene",
     url: "https://cadscene.com",
     host: "cadscene.com",
@@ -68,6 +79,7 @@ export const products: Product[] = [
   },
   {
     id: "pageui",
+    logoBleed: true,
     name: "Page UI",
     url: "https://pageui.dev",
     host: "pageui.dev",
@@ -80,6 +92,7 @@ export const products: Product[] = [
   },
   {
     id: "clobbr",
+    logoBleed: true,
     name: "Clobbr",
     url: "https://clobbr.app",
     host: "clobbr.app",
@@ -92,6 +105,7 @@ export const products: Product[] = [
   },
   {
     id: "crontap",
+    logoBleed: true,
     name: "Crontap",
     url: "https://crontap.com",
     host: "crontap.com",
@@ -104,6 +118,7 @@ export const products: Product[] = [
   },
   {
     id: "hunted",
+    logoBleed: true,
     name: "Hunted.space",
     url: "https://hunted.space",
     host: "hunted.space",
@@ -128,6 +143,7 @@ export const products: Product[] = [
   },
   {
     id: "rarebigdeal",
+    logoOnLight: true,
     name: "Rare Big Deal",
     url: "https://rarebigdeal.com",
     host: "rarebigdeal.com",
@@ -152,6 +168,7 @@ export const products: Product[] = [
   },
   {
     id: "crontool",
+    logoBleed: true,
     name: "CronTool",
     url: "https://crontool.cc",
     host: "crontool.cc",
@@ -164,6 +181,7 @@ export const products: Product[] = [
   },
   {
     id: "apihustle",
+    logoBleed: true,
     name: "Apihustle",
     url: "https://apihustle.com",
     host: "apihustle.com",
@@ -176,6 +194,7 @@ export const products: Product[] = [
   },
   {
     id: "saventify",
+    logoBleed: true,
     name: "Saventify",
     url: "https://saventify.com",
     host: "saventify.com",
@@ -188,6 +207,7 @@ export const products: Product[] = [
   },
   {
     id: "llmboss",
+    logoBleed: true,
     name: "LLM Boss",
     url: "https://llm-boss.com",
     host: "llm-boss.com",
@@ -201,6 +221,7 @@ export const products: Product[] = [
   },
   {
     id: "ralphloop",
+    logoBleed: true,
     name: "Ralph Loop",
     url: "https://ralphloop.sh",
     host: "ralphloop.sh",
@@ -226,6 +247,11 @@ export const products: Product[] = [
     featured: true,
   },
 ];
+
+export const products: Product[] = productInputs.map((p) => ({
+  ...p,
+  logo: p.logo ?? `/logos/${p.id}.webp`,
+}));
 
 export const categories: { id: Category; label: string; line: string }[] = [
   { id: "Build", label: "Build", line: "Sites, pages and renders." },

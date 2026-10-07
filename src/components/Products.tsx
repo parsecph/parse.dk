@@ -1,6 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { accentHex, categories, products } from "@/data/products";
-import { IconBadge } from "./ui/IconBadge";
+import { LogoBadge } from "./ui/LogoBadge";
 import { Reveal } from "./ui/Reveal";
 import { TiltCard } from "./ui/TiltCard";
 
@@ -52,7 +52,7 @@ export function Products() {
                             className="flex items-start justify-between"
                             style={{ transform: "translateZ(36px)" }}
                           >
-                            <IconBadge icon={p.icon} accent={p.accent} />
+                            <LogoBadge product={p} />
                             <span className="rounded-full border border-white/10 px-2.5 py-1 font-mono text-[11px] text-fog-3">
                               {p.host}
                             </span>

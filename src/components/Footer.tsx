@@ -56,7 +56,14 @@ export function Footer() {
                       rel="noopener noreferrer"
                       className="group flex items-center gap-2.5 py-0.5 text-sm text-fog-2 transition hover:text-fog"
                     >
-                      <p.icon className="size-4 shrink-0 text-fog-3 transition group-hover:text-fog" />
+                      <Image
+                        src={p.logo}
+                        alt=""
+                        width={16}
+                        height={16}
+                        unoptimized
+                        className={`size-4 shrink-0 object-contain opacity-80 transition group-hover:opacity-100 ${p.logoOnLight ? "rounded-sm bg-fog p-px" : ""}`}
+                      />
                       <span className="font-medium">{p.name}</span>
                       <span className="truncate text-fog-3">{p.host}</span>
                       <ArrowUpRight className="size-3.5 shrink-0 opacity-0 transition group-hover:opacity-60" />

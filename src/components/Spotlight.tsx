@@ -1,6 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { accentHex, products } from "@/data/products";
-import { IconBadge } from "./ui/IconBadge";
+import { LogoBadge } from "./ui/LogoBadge";
 import { Reveal } from "./ui/Reveal";
 import { TiltCard } from "./ui/TiltCard";
 
@@ -52,9 +52,8 @@ export function Spotlight() {
                         className="absolute size-28 rounded-[28px] border border-white/10 bg-white/[0.04]"
                         style={{ transform: "translateZ(30px) rotate(-6deg)" }}
                       />
-                      <IconBadge
-                        icon={p.icon}
-                        accent={p.accent}
+                      <LogoBadge
+                        product={p}
                         size="lg"
                         className="animate-float"
                       />

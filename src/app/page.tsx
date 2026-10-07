@@ -6,11 +6,14 @@ import { Products } from "@/components/Products";
 import { SceneBackdrop } from "@/components/scene/SceneBackdrop";
 import { Spotlight } from "@/components/Spotlight";
 import { Studio } from "@/components/Studio";
+import { CursorGlow, ScrollProgress } from "@/components/ui/Ambient";
 
 export default function Home() {
   return (
     <>
       <SceneBackdrop />
+      <CursorGlow />
+      <ScrollProgress />
       <Nav />
       <main className="relative z-10">
         <Hero />
