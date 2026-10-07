@@ -51,18 +51,20 @@ export function LiquidBlob({
       uHitStrength: { value: 0 },
       uAmp: { value: 1 },
     };
+    // Dark chrome at rest. Iridescence is dialled up in useFrame while the
+    // pointer is on the surface, so colour reads as a reaction, not decoration.
     const m = new THREE.MeshPhysicalMaterial({
       color: new THREE.Color("#0c0c13"),
-      roughness: 0.16,
-      metalness: 0.5,
+      roughness: 0.14,
+      metalness: 0.6,
       clearcoat: 1,
-      clearcoatRoughness: 0.1,
-      iridescence: 1,
+      clearcoatRoughness: 0.08,
+      iridescence: 0.12,
       iridescenceIOR: 1.4,
       iridescenceThicknessRange: [140, 600],
       envMapIntensity: 1.8,
-      sheen: 0.4,
-      sheenColor: new THREE.Color("#78d8ff"),
+      sheen: 0.3,
+      sheenColor: new THREE.Color("#d8dbe6"),
     });
     m.onBeforeCompile = (shader) => {
       Object.assign(shader.uniforms, uniforms);
@@ -146,6 +148,8 @@ export function LiquidBlob({
       hit ? 6 : 2.5,
       dt,
     );
+    const mat = mesh.current.material;
+    mat.iridescence = damp(mat.iridescence, hit ? 1 : 0.12, hit ? 5 : 2, dt);
   });
 
   return (

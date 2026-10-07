@@ -43,8 +43,10 @@ export function TiltCard({
   const glareY = useTransform(sy, [0, 1], [0, 100]);
   const glareOpacity = useTransform(sh, [0, 1], [0, 1]);
   const lift = useTransform(sh, [0, 1], [0, -6]);
-  const glare = useMotionTemplate`radial-gradient(520px circle at ${glareX}% ${glareY}%, ${glow}33, transparent 45%)`;
-  const border = useMotionTemplate`radial-gradient(360px circle at ${glareX}% ${glareY}%, ${glow}aa, rgba(255,255,255,0.08) 60%)`;
+  const glare = useMotionTemplate`radial-gradient(520px circle at ${glareX}% ${glareY}%, ${glow}2e, rgba(255,255,255,0.04) 30%, transparent 50%)`;
+  const border = useMotionTemplate`radial-gradient(380px circle at ${glareX}% ${glareY}%, ${glow}cc, transparent 60%)`;
+  const shadow = useMotionTemplate`0 40px 90px -40px ${glow}55`;
+  const shadowOpacity = useTransform(sh, [0, 1], [0, 1]);
 
   const onMove = useCallback(
     (e: React.PointerEvent<HTMLAnchorElement>) => {
@@ -77,12 +79,21 @@ export function TiltCard({
         style={{ rotateX, rotateY, y: lift }}
         className={`preserve-3d group relative block h-full rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-sky/70 motion-reduce:transform-none ${className}`}
       >
-        {/* animated border */}
+        {/* hover glow under the card */}
         <motion.div
           aria-hidden
-          className="pointer-events-none absolute -inset-px rounded-[inherit] opacity-70"
+          className="pointer-events-none absolute inset-4 rounded-[inherit]"
+          style={{ boxShadow: shadow, opacity: shadowOpacity }}
+        />
+        {/* surface */}
+        <div className="glass-card noise absolute inset-0 rounded-[inherit]" />
+        {/* resting rim: lit from the top, fading out below */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -inset-px rounded-[inherit]"
           style={{
-            background: border,
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05) 45%, rgba(255,255,255,0.02))",
             WebkitMask:
               "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
             WebkitMaskComposite: "xor",
@@ -90,8 +101,20 @@ export function TiltCard({
             padding: 1,
           }}
         />
-        {/* surface */}
-        <div className="glass noise absolute inset-0 rounded-[inherit]" />
+        {/* accent rim that follows the pointer, only while hovering */}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute -inset-px rounded-[inherit]"
+          style={{
+            background: border,
+            opacity: glareOpacity,
+            WebkitMask:
+              "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+            padding: 1,
+          }}
+        />
         {/* glare */}
         <motion.div
           aria-hidden

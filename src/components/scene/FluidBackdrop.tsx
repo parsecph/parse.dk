@@ -41,9 +41,11 @@ export function FluidBackdrop({
       uTrailAge: { value: new Float32Array(TRAIL).fill(1) },
       uScroll: { value: 0 },
       uBase: { value: new THREE.Color("#07070b") },
-      uColA: { value: new THREE.Color("#2a1030") },
-      uColB: { value: new THREE.Color("#0b3d52") },
-      uColC: { value: new THREE.Color("#5a2a26") },
+      // Near-monochrome inks; the only real colour lives in the pointer glow.
+      uColA: { value: new THREE.Color("#15151d") },
+      uColB: { value: new THREE.Color("#1a2029") },
+      uColC: { value: new THREE.Color("#1d1a20") },
+      uGlow: { value: new THREE.Color("#6fb4d6") },
     };
     return new THREE.ShaderMaterial({
       uniforms,

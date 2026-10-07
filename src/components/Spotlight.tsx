@@ -15,7 +15,7 @@ export function Spotlight() {
     <section className="relative px-4 py-20 sm:px-6 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <Reveal>
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-sky">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-fog-3">
             Start here
           </p>
           <h2 className="text-balance mt-3 max-w-2xl text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
@@ -39,7 +39,11 @@ export function Spotlight() {
                     <div className="relative flex h-44 items-center justify-center">
                       <div
                         aria-hidden
-                        className="absolute size-40 rounded-full blur-3xl"
+                        className="absolute size-40 rounded-full bg-white/[0.05] blur-3xl"
+                      />
+                      <div
+                        aria-hidden
+                        className="absolute size-40 rounded-full opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-100"
                         style={{ background: `${hex}55` }}
                       />
                       <div

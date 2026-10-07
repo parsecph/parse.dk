@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUpRight, MapPin } from "lucide-react";
+import { ArrowDown, ArrowUpRight, MapPin, MousePointerClick } from "lucide-react";
 import { products } from "@/data/products";
 import { CountUp } from "./ui/CountUp";
 import { Magnetic } from "./ui/Magnetic";
@@ -15,19 +15,19 @@ export function Hero() {
         <div className="max-w-2xl">
           <Reveal>
             <p className="glass inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium tracking-wide text-fog-2">
-              <MapPin className="size-3.5 text-coral" />
+              <MapPin className="size-3.5 text-fog-3" />
               Made in Copenhagen
             </p>
           </Reveal>
 
-          <h1 className="text-balance mt-6 text-5xl font-semibold leading-[0.98] tracking-[-0.035em] sm:text-7xl lg:text-8xl">
+          <h1 className="text-balance group mt-6 text-5xl font-semibold leading-[0.98] tracking-[-0.035em] sm:text-7xl lg:text-8xl">
             <SplitWords text="We make software." delay={0.1} />
             <br />
             <SplitWords
               text="Then we ship it."
               delay={0.42}
               whole
-              className="bg-gradient-to-r from-sky via-fog to-coral-2 bg-clip-text text-transparent"
+              className="shine-text group-hover:[--shine-a:var(--color-sky)] group-hover:[--shine-b:var(--color-fog)] group-hover:[--shine-c:var(--color-coral-2)]"
             />
           </h1>
 
@@ -44,7 +44,7 @@ export function Hero() {
               <Magnetic>
                 <a
                   href="#products"
-                  className="group inline-flex items-center gap-2 rounded-full bg-fog px-5 py-3 text-sm font-semibold text-ink shadow-[0_10px_40px_-10px_rgba(120,216,255,0.6)] transition hover:bg-white hover:shadow-[0_14px_50px_-10px_rgba(120,216,255,0.9)]"
+                  className="group inline-flex items-center gap-2 rounded-full bg-fog px-5 py-3 text-sm font-semibold text-ink shadow-[0_12px_40px_-12px_rgba(255,255,255,0.45)] transition hover:bg-white hover:shadow-[0_16px_50px_-12px_rgba(255,255,255,0.7)]"
                 >
                   See the products
                   <ArrowDown className="size-4 transition group-hover:translate-y-0.5" />
@@ -55,7 +55,7 @@ export function Hero() {
                   href="https://github.com/parsecph"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="glass group inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-fog transition hover:bg-white/10"
+                  className="group inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm font-medium text-fog-2 transition hover:border-white/40 hover:text-fog"
                 >
                   Follow on GitHub
                   <ArrowUpRight className="size-4 opacity-70 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -65,20 +65,20 @@ export function Hero() {
           </Reveal>
 
           <Reveal delay={0.8}>
-            <dl className="mt-12 grid max-w-md grid-cols-3 gap-6 border-t border-white/10 pt-6">
+            <dl className="mt-12 flex max-w-md gap-12 border-t border-white/10 pt-6">
               <Stat label="Products">
                 <CountUp to={products.length} />
               </Stat>
-              <Stat label="Small team">
-                <CountUp to={1} duration={0.8} />
-              </Stat>
-              <Stat label="Denmark">CPH</Stat>
+              <Stat label="Based in">CPH</Stat>
             </dl>
           </Reveal>
 
-          <p className="mt-10 hidden text-xs text-fog-3 lg:block">
-            Tip: the floating tiles are the products. Hover one. Click it.
-          </p>
+          <Reveal delay={0.9}>
+            <p className="mt-10 hidden items-center gap-2 text-xs text-fog-3 lg:inline-flex">
+              <MousePointerClick className="size-3.5" />
+              The floating tiles are the products. Hover one. Click it.
+            </p>
+          </Reveal>
         </div>
       </div>
     </section>

@@ -81,6 +81,7 @@ uniform vec3 uColA;
 uniform vec3 uColB;
 uniform vec3 uColC;
 uniform vec3 uBase;
+uniform vec3 uGlow;
 varying vec2 vUv;
 
 vec2 hash2(vec2 p) {
@@ -129,13 +130,14 @@ void main() {
   float f = fbm(p + 2.0 * r - uScroll * 0.6);
 
   vec3 col = uBase;
-  col = mix(col, uColA, smoothstep(0.15, 0.75, f) * 0.55);
-  col = mix(col, uColB, smoothstep(0.35, 0.9, length(q)) * 0.45);
-  col = mix(col, uColC, smoothstep(0.45, 0.95, r.y) * 0.35);
+  col = mix(col, uColA, smoothstep(0.15, 0.75, f) * 0.7);
+  col = mix(col, uColB, smoothstep(0.35, 0.9, length(q)) * 0.6);
+  col = mix(col, uColC, smoothstep(0.45, 0.95, r.y) * 0.45);
 
-  // Pointer highlight
-  float glow = exp(-dot(dp * vec2(1.6, 1.0), dp * vec2(1.6, 1.0)) * 14.0);
-  col += uColB * glow * 0.18;
+  // Pointer highlight: the one place colour is allowed in at rest.
+  float glow = exp(-dot(dp * vec2(1.6, 1.0), dp * vec2(1.6, 1.0)) * 12.0);
+  float stirred = clamp(length(stir) * 3.0, 0.0, 1.0);
+  col += uGlow * glow * (0.07 + 0.1 * stirred);
 
   float vignette = smoothstep(1.25, 0.25, length((uv - 0.5) * vec2(1.4, 1.1)));
   col *= 0.55 + 0.45 * vignette;

@@ -68,31 +68,30 @@ function Rig({
 function Lights() {
   return (
     <>
-      <ambientLight intensity={0.35} />
-      <directionalLight position={[4, 6, 6]} intensity={1.4} />
-      <pointLight position={[-6, -2, 3]} intensity={30} color="#ee7259" />
-      <pointLight position={[6, 3, -4]} intensity={30} color="#78d8ff" />
-      <pointLight position={[0, -6, -2]} intensity={14} color="#a78bfa" />
+      <ambientLight intensity={0.3} />
+      <directionalLight position={[4, 6, 6]} intensity={1.3} color="#f4f4f7" />
+      <pointLight position={[-6, -2, 3]} intensity={18} color="#e9e4e2" />
+      <pointLight position={[6, 3, -4]} intensity={18} color="#dfe9f0" />
       <Environment resolution={128} frames={1}>
         <Lightformer
           form="ring"
-          intensity={6}
-          color="#78d8ff"
+          intensity={5}
+          color="#e6eef4"
           scale={6}
           position={[-6, 4, -6]}
           target={[0, 0, 0]}
         />
         <Lightformer
           form="rect"
-          intensity={4}
-          color="#ee7259"
+          intensity={3}
+          color="#efe7e4"
           scale={[8, 3, 1]}
           position={[6, -3, -4]}
           target={[0, 0, 0]}
         />
         <Lightformer
           form="rect"
-          intensity={3}
+          intensity={4}
           color="#ffffff"
           scale={[10, 1, 1]}
           position={[0, 7, 2]}
@@ -100,8 +99,8 @@ function Lights() {
         />
         <Lightformer
           form="circle"
-          intensity={2}
-          color="#a78bfa"
+          intensity={1.5}
+          color="#d8d8e4"
           scale={4}
           position={[0, -6, 4]}
           target={[0, 0, 0]}
@@ -151,8 +150,8 @@ export default function Scene({
         scale={[22, 14, 12]}
         size={2}
         speed={0.3}
-        opacity={0.5}
-        color="#b4ebff"
+        opacity={0.4}
+        color="#e6e6ee"
       />
       <fog attach="fog" args={["#07070b", 9, 24]} />
     </Canvas>

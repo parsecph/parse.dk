@@ -8,19 +8,19 @@ const principles = [
     icon: Rocket,
     title: "Ship it.",
     body: "An idea is worth nothing until someone can use it. We put things out early, then make them better.",
-    accent: "text-coral",
+    accent: "group-hover:text-coral",
   },
   {
     icon: Scissors,
     title: "Cut it down.",
     body: "Every product does one thing. We remove until only the useful part is left.",
-    accent: "text-sky",
+    accent: "group-hover:text-sky",
   },
   {
     icon: Check,
     title: "Make it work.",
     body: "Fast, honest, no tricks. If it says it does something, it does.",
-    accent: "text-mint",
+    accent: "group-hover:text-mint",
   },
 ];
 
@@ -31,7 +31,7 @@ export function Studio() {
         <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
           <div>
             <Reveal>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-violet">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-fog-3">
                 The studio
               </p>
               <h2 className="text-balance mt-3 text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
@@ -46,7 +46,7 @@ export function Studio() {
 
             <Reveal delay={0.1}>
               <div className="glass mt-8 inline-flex items-center gap-3 rounded-2xl px-4 py-3">
-                <MapPin className="size-5 text-coral" />
+                <MapPin className="size-5 text-fog-2" />
                 <div className="text-sm">
                   <p className="font-medium">Copenhagen, Denmark</p>
                   <p className="text-fog-3">Registered company · DK39296675</p>
@@ -81,9 +81,12 @@ export function Studio() {
           <ul className="grid gap-4">
             {principles.map((p, i) => (
               <Reveal key={p.title} delay={i * 0.08}>
-                <li className="glass noise relative flex gap-5 rounded-3xl p-6">
-                  <div className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/5">
-                    <p.icon className={`size-6 ${p.accent}`} strokeWidth={2.2} />
+                <li className="glass-card noise group relative flex gap-5 rounded-3xl p-6 transition-transform duration-500 hover:-translate-y-1">
+                  <div className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/5 transition-colors duration-500 group-hover:border-white/20">
+                    <p.icon
+                      className={`size-6 text-fog-2 transition-colors duration-500 ${p.accent}`}
+                      strokeWidth={2.2}
+                    />
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold tracking-tight">

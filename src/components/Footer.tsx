@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="relative z-10 px-4 pb-10 pt-20 sm:px-6">
       <div className="mx-auto max-w-6xl">
-        <div className="glass noise relative rounded-[2rem] p-8 sm:p-12">
+        <div className="glass-card noise relative rounded-[2rem] p-8 sm:p-12">
           <div className="grid gap-10 lg:grid-cols-[1fr_2fr]">
             <div>
               <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ export function Footer() {
                         width={16}
                         height={16}
                         unoptimized
-                        className={`size-4 shrink-0 object-contain opacity-80 transition group-hover:opacity-100 ${p.logoOnLight ? "rounded-sm bg-fog p-px" : ""}`}
+                        className={`size-4 shrink-0 object-contain opacity-80 saturate-0 transition group-hover:opacity-100 group-hover:saturate-100 ${p.logoBleed ? "rounded-[3px]" : ""}`}
                       />
                       <span className="font-medium">{p.name}</span>
                       <span className="truncate text-fog-3">{p.host}</span>

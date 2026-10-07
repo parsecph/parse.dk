@@ -9,7 +9,7 @@ export function Products() {
     <section id="products" className="relative scroll-mt-24 px-4 py-20 sm:px-6 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <Reveal>
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-coral">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-fog-3">
             All {products.length}
           </p>
           <h2 className="text-balance mt-3 max-w-2xl text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">

@@ -31,6 +31,29 @@ function getRoundedMask() {
   return roundedMask;
 }
 
+const logoVertex = /* glsl */ `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+
+const logoFragment = /* glsl */ `
+uniform sampler2D map;
+uniform sampler2D alphaMap;
+uniform float uUseMask;
+uniform float uSat;
+varying vec2 vUv;
+void main() {
+  vec4 c = texture2D(map, vUv);
+  float a = c.a * mix(1.0, texture2D(alphaMap, vUv).r, uUseMask);
+  float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
+  gl_FragColor = vec4(mix(vec3(l), c.rgb, uSat), a);
+  #include <colorspace_fragment>
+}
+`;
+
 function cameFromInteractiveDom(e: ThreeEvent<PointerEvent | MouseEvent>) {
   const target = e.nativeEvent.target as Element | null;
   return Boolean(target?.closest?.("a, button, input, textarea, select"));
@@ -75,11 +98,26 @@ function Tile({
   const mask = useMemo(() => (product.logoBleed ? getRoundedMask() : null), [product.logoBleed]);
 
   const hex = accentHex[product.accent];
-  const bodyColor = useMemo(
-    () => new THREE.Color(hex).lerp(new THREE.Color("#0b0b10"), 0.72),
-    [hex],
-  );
   const glowColor = useMemo(() => new THREE.Color(hex), [hex]);
+  const bodyRef = useRef<THREE.MeshPhysicalMaterial>(null!);
+  const logoFront = useRef<THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial>>(null!);
+
+  // Logos rest desaturated and bloom to full colour on hover.
+  const logoMaterial = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        uniforms: {
+          map: { value: texture },
+          alphaMap: { value: mask },
+          uUseMask: { value: mask ? 1 : 0 },
+          uSat: { value: 0.1 },
+        },
+        vertexShader: logoVertex,
+        fragmentShader: logoFragment,
+        transparent: true,
+      }),
+    [texture, mask],
+  );
 
   const baseAngle = (index / total) * Math.PI * 2;
   const lift = useMemo(() => (index % 2 === 0 ? 0.55 : -0.55) + Math.sin(index * 7.3) * 0.25, [index]);
@@ -112,6 +150,10 @@ function Tile({
     inner.current.rotation.y = damp(inner.current.rotation.y, ry, 8, dt);
     inner.current.rotation.x = damp(inner.current.rotation.x, rx, 8, dt);
     inner.current.rotation.z = damp(inner.current.rotation.z, hovered ? 0 : Math.sin(t * 0.3 + index) * 0.08, 8, dt);
+
+    const sat = logoFront.current.material.uniforms.uSat as { value: number };
+    sat.value = damp(sat.value, hovered ? 1 : 0.1, hovered ? 7 : 3, dt);
+    bodyRef.current.emissiveIntensity = damp(bodyRef.current.emissiveIntensity, hovered ? 0.3 : 0, 7, dt);
   });
 
   const onOver = (e: ThreeEvent<PointerEvent>) => {
@@ -138,35 +180,28 @@ function Tile({
           onClick={onClick}
         >
           <meshPhysicalMaterial
-            color={bodyColor}
-            roughness={0.22}
-            metalness={0.35}
+            ref={bodyRef}
+            color="#15151d"
+            roughness={0.28}
+            metalness={0.45}
             clearcoat={1}
-            clearcoatRoughness={0.15}
+            clearcoatRoughness={0.12}
             emissive={glowColor}
-            emissiveIntensity={hovered ? 0.35 : 0.08}
-            envMapIntensity={1.4}
+            emissiveIntensity={0}
+            envMapIntensity={1.3}
           />
         </RoundedBox>
 
         {[1, -1].map((side) => (
-          <group key={side} position-z={side * 0.085} rotation-y={side === 1 ? 0 : Math.PI}>
-            {product.logoOnLight && (
-              <mesh position-z={-0.002}>
-                <planeGeometry args={[0.74, 0.74]} />
-                <meshBasicMaterial color="#f4f4f7" toneMapped={false} />
-              </mesh>
-            )}
-            <mesh position-z={0.001}>
-              <planeGeometry args={[logoSize[0], logoSize[1]]} />
-              <meshBasicMaterial
-                map={texture}
-                alphaMap={mask ?? undefined}
-                transparent
-                toneMapped={false}
-              />
-            </mesh>
-          </group>
+          <mesh
+            key={side}
+            ref={side === 1 ? logoFront : undefined}
+            position-z={side * 0.086}
+            rotation-y={side === 1 ? 0 : Math.PI}
+            material={logoMaterial}
+          >
+            <planeGeometry args={[logoSize[0], logoSize[1]]} />
+          </mesh>
         ))}
 
         {hovered && (

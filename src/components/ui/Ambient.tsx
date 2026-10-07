@@ -16,7 +16,7 @@ export function ScrollProgress() {
   return (
     <motion.div
       aria-hidden
-      className="fixed inset-x-0 top-0 z-[60] h-[3px] origin-left bg-gradient-to-r from-sky via-fog to-coral shadow-[0_0_12px_rgba(120,216,255,0.8)]"
+      className="fixed inset-x-0 top-0 z-[60] h-[2px] origin-left bg-fog/80 shadow-[0_0_10px_rgba(255,255,255,0.5)]"
       style={{ scaleX }}
     />
   );
@@ -49,7 +49,7 @@ export function CursorGlow() {
         left,
         top,
         background:
-          "radial-gradient(closest-side, rgba(120,216,255,0.16), rgba(238,114,89,0.06) 45%, transparent 70%)",
+          "radial-gradient(closest-side, rgba(255,255,255,0.10), rgba(120,216,255,0.04) 45%, transparent 70%)",
       }}
     />
   );

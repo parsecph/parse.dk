@@ -36,8 +36,6 @@ export interface Product {
   icon: LucideIcon;
   /** Path under /public to the product's own logo (highest-res available). */
   logo: string;
-  /** Set when the mark is dark-on-light and needs a light tile behind it. */
-  logoOnLight?: boolean;
   /** Set when the logo is a full-bleed app icon that should fill its tile. */
   logoBleed?: boolean;
   category: Category;
@@ -143,7 +141,7 @@ const productInputs: ProductInput[] = [
   },
   {
     id: "rarebigdeal",
-    logoOnLight: true,
+    logoBleed: true,
     name: "Rare Big Deal",
     url: "https://rarebigdeal.com",
     host: "rarebigdeal.com",

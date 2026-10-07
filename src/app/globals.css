@@ -67,8 +67,25 @@ h3 {
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--color-coral) 70%, transparent);
-  color: white;
+  background: color-mix(in oklab, var(--color-fog) 85%, transparent);
+  color: var(--color-ink);
+}
+
+/* Gradient text that rests in grey and only takes on colour when asked to. */
+@property --shine-a {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #c9c9d4;
+}
+@property --shine-b {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #8b8b9e;
+}
+@property --shine-c {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #c9c9d4;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -82,18 +99,62 @@ h3 {
   }
 }
 
+@utility shine-text {
+  background-image: linear-gradient(
+    100deg,
+    var(--shine-a) 0%,
+    var(--shine-b) 55%,
+    var(--shine-c) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition:
+    --shine-a 0.7s ease,
+    --shine-b 0.7s ease,
+    --shine-c 0.7s ease;
+}
+
 /* Opaque enough to keep copy readable even where backdrop-filter is unavailable. */
 @utility glass {
   background:
     linear-gradient(
       180deg,
-      color-mix(in oklab, white 6%, transparent),
-      color-mix(in oklab, white 2%, transparent)
+      color-mix(in oklab, white 7%, transparent),
+      color-mix(in oklab, white 1.5%, transparent) 50%,
+      transparent
     ),
     color-mix(in oklab, var(--color-ink-2) 74%, transparent);
-  border: 1px solid color-mix(in oklab, white 10%, transparent);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid color-mix(in oklab, white 9%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, white 9%, transparent),
+    0 1px 0 rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+/* Card surface: a cool top-left light, a faint inner rim and a deep, soft drop. */
+@utility glass-card {
+  background:
+    radial-gradient(
+      120% 90% at 0% 0%,
+      color-mix(in oklab, white 9%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, white 4%, transparent),
+      transparent 60%
+    ),
+    color-mix(in oklab, var(--color-ink-2) 78%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, white 14%, transparent),
+    inset 0 0 0 1px color-mix(in oklab, white 4%, transparent),
+    inset 0 -40px 60px -50px rgba(0, 0, 0, 0.7),
+    0 30px 70px -30px rgba(0, 0, 0, 0.9),
+    0 10px 24px -14px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
 }
 
 @utility text-balance {
