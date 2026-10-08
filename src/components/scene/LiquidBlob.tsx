@@ -29,9 +29,10 @@ export function LiquidBlob({
   reduced: React.RefObject<boolean>;
 }) {
   const mesh = useRef<THREE.Mesh<THREE.BufferGeometry, THREE.MeshPhysicalMaterial>>(null!);
-  const { camera } = useThree();
+  const { camera, gl } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const burst = useRef(0);
+  const inside = useRef(false);
 
   const material = useMemo(() => {
     const uniforms: Uniforms = {
@@ -87,6 +88,22 @@ export function LiquidBlob({
     return () => window.removeEventListener("pointerdown", onDown);
   }, []);
 
+  // Only react to the pointer while it is really over the canvas; otherwise
+  // the default (0, 0) pointer would keep poking the centre forever.
+  useEffect(() => {
+    const el = gl.domElement;
+    const on = () => (inside.current = true);
+    const off = () => (inside.current = false);
+    el.addEventListener("pointerenter", on);
+    el.addEventListener("pointerleave", off);
+    el.addEventListener("pointercancel", off);
+    return () => {
+      el.removeEventListener("pointerenter", on);
+      el.removeEventListener("pointerleave", off);
+      el.removeEventListener("pointercancel", off);
+    };
+  }, [gl]);
+
   useFrame((state, dt) => {
     const uniforms = mesh.current.material.userData.uniforms as Uniforms;
     const t = state.clock.elapsedTime;
@@ -99,8 +116,11 @@ export function LiquidBlob({
     mesh.current.rotation.x = Math.sin(t * 0.17) * 0.15 * slow;
 
     // Pointer (canvas-relative) -> surface hit
-    raycaster.setFromCamera(state.pointer, camera);
-    const hit = raycaster.intersectObject(mesh.current, false)[0];
+    let hit: THREE.Intersection | undefined;
+    if (inside.current) {
+      raycaster.setFromCamera(state.pointer, camera);
+      hit = raycaster.intersectObject(mesh.current, false)[0];
+    }
     let target = 0;
     if (hit) {
       const local = mesh.current.worldToLocal(hit.point.clone());

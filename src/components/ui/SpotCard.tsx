@@ -25,8 +25,8 @@ export function SpotCard({
   const hover = useMotionValue(0);
   const sh = useSpring(hover, { stiffness: 200, damping: 24 });
 
-  const highlight = useMotionTemplate`radial-gradient(420px circle at ${mx}px ${my}px, rgba(255,255,255,0.07), transparent 60%)`;
-  const rim = useMotionTemplate`radial-gradient(260px circle at ${mx}px ${my}px, ${accent}99, transparent 70%)`;
+  const highlight = useMotionTemplate`radial-gradient(460px circle at ${mx}px ${my}px, rgba(255,255,255,0.11), transparent 60%)`;
+  const rim = useMotionTemplate`radial-gradient(320px circle at ${mx}px ${my}px, ${accent}, transparent 70%)`;
 
   const onMove = useCallback(
     (e: React.PointerEvent<HTMLAnchorElement>) => {
