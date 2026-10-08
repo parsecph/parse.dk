@@ -104,14 +104,14 @@ body {
 }
 
 /* Logos rest as luminance and take colour when their `group` is hovered.
-   Without a hover device there is nothing to wait for, so keep the colour. */
+   Without a hover device, leave just a hint of colour. */
 @utility logo-rest {
   filter: saturate(0) brightness(0.92);
   transition:
     filter 0.45s ease,
     transform 0.45s ease;
   @media (hover: none) {
-    filter: saturate(0.9);
+    filter: saturate(0.3);
   }
   &:is(:where(.group):hover *) {
     filter: none;
