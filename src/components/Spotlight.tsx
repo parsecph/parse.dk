@@ -2,7 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { accentHex, products } from "@/data/products";
 import { LogoBadge } from "./ui/LogoBadge";
 import { Reveal } from "./ui/Reveal";
-import { TiltCard } from "./ui/TiltCard";
+import { SpotCard } from "./ui/SpotCard";
 
 const spotlightIds = ["pageai", "ralphloop", "shipixen"] as const;
 
@@ -12,80 +12,43 @@ export function Spotlight() {
     .filter((p): p is NonNullable<typeof p> => Boolean(p));
 
   return (
-    <section className="relative px-4 py-20 sm:px-6 sm:py-28">
+    <section className="relative px-4 py-24 sm:px-6 sm:py-32">
       <div className="mx-auto max-w-6xl">
         <Reveal>
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-fog-3">
-            Start here
-          </p>
-          <h2 className="text-balance mt-3 max-w-2xl text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
+          <p className="text-sm text-fog-3">Start here</p>
+          <h2 className="text-balance mt-2 max-w-xl text-3xl font-medium tracking-[-0.03em] sm:text-4xl">
             Three things to try first.
           </h2>
         </Reveal>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
-          {picks.map((p, i) => {
-            const hex = accentHex[p.accent];
-            return (
-              <Reveal key={p.id} delay={i * 0.08} className="h-full">
-                <TiltCard
-                  href={p.url}
-                  glow={hex}
-                  maxTilt={8}
-                  ariaLabel={`${p.name} — ${p.tagline}`}
-                  className="min-h-[26rem]"
-                >
-                  <div className="flex h-full flex-col p-7">
-                    <div className="relative flex h-44 items-center justify-center">
-                      <div
-                        aria-hidden
-                        className="absolute size-40 rounded-full bg-white/[0.05] blur-3xl"
-                      />
-                      <div
-                        aria-hidden
-                        className="absolute size-40 rounded-full opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-100"
-                        style={{ background: `${hex}55` }}
-                      />
-                      <div
-                        aria-hidden
-                        className="absolute size-36 rounded-[34px] border border-white/10 bg-white/[0.03]"
-                        style={{ transform: "translateZ(10px) rotate(8deg)" }}
-                      />
-                      <div
-                        aria-hidden
-                        className="absolute size-28 rounded-[28px] border border-white/10 bg-white/[0.04]"
-                        style={{ transform: "translateZ(30px) rotate(-6deg)" }}
-                      />
-                      <LogoBadge
-                        product={p}
-                        size="lg"
-                        className="animate-float"
-                      />
-                    </div>
-
-                    <div
-                      className="mt-auto"
-                      style={{ transform: "translateZ(24px)" }}
-                    >
-                      <div className="flex items-center gap-2 text-sm text-fog-3">
-                        <span className="font-medium text-fog">{p.name}</span>
-                        <span>·</span>
-                        <span>{p.host}</span>
-                      </div>
-                      <h3 className="text-balance mt-2 text-2xl font-semibold tracking-tight">
-                        {p.tagline}
-                      </h3>
-                      <p className="mt-2 text-fog-2">{p.blurb}</p>
-                      <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-fog">
-                        Open {p.host}
-                        <ArrowUpRight className="size-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                      </span>
-                    </div>
+        <div className="mt-10 grid gap-3 md:grid-cols-3">
+          {picks.map((p, i) => (
+            <Reveal key={p.id} delay={i * 0.06} className="h-full">
+              <SpotCard
+                href={p.url}
+                accent={accentHex[p.accent]}
+                ariaLabel={`${p.name} — ${p.tagline}`}
+                className="h-full"
+              >
+                <div className="flex h-full flex-col p-6">
+                  <LogoBadge product={p} size="lg" />
+                  <div className="mt-10 flex items-center gap-2 text-sm text-fog-3">
+                    <span className="font-medium text-fog">{p.name}</span>
+                    <span className="text-fog-3/60">·</span>
+                    <span>{p.host}</span>
                   </div>
-                </TiltCard>
-              </Reveal>
-            );
-          })}
+                  <h3 className="text-balance mt-2 text-xl font-medium tracking-tight">
+                    {p.tagline}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-fog-2">{p.blurb}</p>
+                  <span className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-fog-2 transition group-hover:text-fog">
+                    Open
+                    <ArrowUpRight className="size-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </span>
+                </div>
+              </SpotCard>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>
