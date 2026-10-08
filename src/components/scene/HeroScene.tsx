@@ -6,6 +6,7 @@ import { Suspense, useEffect, useMemo, useRef, useState, useSyncExternalStore } 
 import * as THREE from "three";
 import { LiquidBlob } from "./LiquidBlob";
 import { LogoTiles, type Spin } from "./LogoTiles";
+import type { Product } from "@/data/products";
 
 const damp = THREE.MathUtils.damp;
 
@@ -56,6 +57,7 @@ function Cluster({
   touch,
   detail,
   labelLayer,
+  onSelect,
 }: {
   targetRef: React.RefObject<Spin>;
   spinRef: React.RefObject<Spin>;
@@ -63,6 +65,7 @@ function Cluster({
   touch: boolean;
   detail: number;
   labelLayer: React.RefObject<HTMLDivElement>;
+  onSelect?: (product: Product | null) => void;
 }) {
   const root = useRef<THREE.Group>(null!);
   const { viewport } = useThree();
@@ -79,7 +82,14 @@ function Cluster({
     <group ref={root} scale={fit}>
       <LiquidBlob radius={1.1} detail={detail} reduced={reduced} />
       <Suspense fallback={null}>
-        <LogoTiles radius={2.45} spinRef={spinRef} reduced={reduced} touch={touch} labelLayer={labelLayer} />
+        <LogoTiles
+          radius={2.45}
+          spinRef={spinRef}
+          reduced={reduced}
+          touch={touch}
+          labelLayer={labelLayer}
+          onSelect={onSelect}
+        />
       </Suspense>
     </group>
   );
@@ -107,9 +117,11 @@ function Lights() {
 export default function HeroScene({
   labelLayer,
   active,
+  onSelect,
 }: {
   labelLayer: React.RefObject<HTMLDivElement>;
   active: boolean;
+  onSelect?: (product: Product | null) => void;
 }) {
   const touch = useMedia("(hover: none)");
   const small = useMedia("(max-width: 1023px)");
@@ -147,6 +159,7 @@ export default function HeroScene({
         touch={touch}
         detail={detail}
         labelLayer={labelLayer}
+        onSelect={onSelect}
       />
     </Canvas>
   );

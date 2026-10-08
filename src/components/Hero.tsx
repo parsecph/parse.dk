@@ -63,11 +63,8 @@ export function Hero() {
           </Reveal>
         </div>
 
-        <HeroVisual className="h-[22rem] sm:h-[26rem] lg:h-[min(44rem,calc(100svh-8rem))]" />
+        <HeroVisual className="h-[24rem] sm:h-[28rem] lg:h-[min(44rem,calc(100svh-8rem))]" />
       </div>
-      <p className="mx-auto mt-4 max-w-6xl text-center text-xs text-fog-3 lg:hidden">
-        Tap a tile to see what it is. Tap again to open it.
-      </p>
     </section>
   );
 }

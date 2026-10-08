@@ -197,7 +197,7 @@ function Tile({
           </mesh>
         ))}
 
-        {lit && (
+        {lit && !touch && (
           <Html
             center
             position={[0, -0.82, 0]}
@@ -211,7 +211,7 @@ function Tile({
                 style={{ background: accentHex[product.accent] }}
               />
               <span className="font-medium">{product.name}</span>
-              <span className="text-fog-3">{touch && selected ? "Tap again to open" : product.host}</span>
+              <span className="text-fog-3">{product.host}</span>
             </div>
           </Html>
         )}
@@ -230,14 +230,20 @@ export function LogoTiles({
   reduced,
   touch,
   labelLayer,
+  onSelect,
 }: {
   radius?: number;
   spinRef: React.RefObject<Spin>;
   reduced: React.RefObject<boolean>;
   touch: boolean;
   labelLayer: React.RefObject<HTMLDivElement>;
+  onSelect?: (product: Product | null) => void;
 }) {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelectedId] = useState<string | null>(null);
+  const setSelected = (id: string | null) => {
+    setSelectedId(id);
+    onSelect?.(id ? (products.find((p) => p.id === id) ?? null) : null);
+  };
   const bases = useMemo(
     () => products.map((_, i) => spherePoint(i, products.length, radius)),
     [radius],
