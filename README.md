@@ -3,8 +3,9 @@
 Dark-mode-only Next.js site for Parse Copenhagen, showcasing every product the studio has shipped.
 
 - **Stack:** Next.js (App Router), React, Tailwind CSS v4, `lucide-react`, `motion`, `three` + `@react-three/fiber` + `@react-three/drei`
-- **3D:** a fixed WebGL layer (iridescent torus knot, an orbiting ring of one shape per product, sparkles) that reacts to scroll and pointer, plus CSS 3D tilt cards
-- **Content:** every product lives in `src/data/products.ts` — add a new entry there and it shows up in the marquee, the grid and the footer
+- **3D:** one WebGL box inside the hero (`src/components/scene/`): the product logos as monochrome tiles orbiting a liquid blob. It scrolls away with the hero, pauses when off screen and lowers resolution if the device struggles. Hover (or tap) a tile to bring its colour in; click (or tap again) to open the product
+- **Design:** monochrome at rest, small colour accents on interaction. Flat panels with hairline borders, no light mode
+- **Content:** every product lives in `src/data/products.ts` — add a new entry there plus a logo in `public/logos/<id>.webp` and it shows up in the hero, the marquee, the grid and the footer
 
 ```bash
 npm install

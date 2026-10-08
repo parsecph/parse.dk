@@ -1,18 +1,12 @@
 "use client";
 
 import { Html, RoundedBox, useCursor, useTexture } from "@react-three/drei";
-import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
+import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { accentHex, products, type Product } from "@/data/products";
-import type { ScrollState } from "./use-scroll-progress";
 
 const damp = THREE.MathUtils.damp;
-const lerp = THREE.MathUtils.lerp;
-const smooth = (t: number) => {
-  const x = THREE.MathUtils.clamp(t, 0, 1);
-  return x * x * (3 - 2 * x);
-};
 
 let roundedMask: THREE.CanvasTexture | null = null;
 /** Shared alpha mask that rounds the corners of full-bleed logo planes. */
@@ -22,10 +16,9 @@ function getRoundedMask() {
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = size;
   const ctx = canvas.getContext("2d")!;
-  const r = size * 0.2;
   ctx.fillStyle = "#fff";
   ctx.beginPath();
-  ctx.roundRect(0, 0, size, size, r);
+  ctx.roundRect(0, 0, size, size, size * 0.2);
   ctx.fill();
   roundedMask = new THREE.CanvasTexture(canvas);
   return roundedMask;
@@ -39,75 +32,76 @@ void main() {
 }
 `;
 
+// Logos rest as pure luminance and are mixed back to colour on interaction.
 const logoFragment = /* glsl */ `
 uniform sampler2D map;
 uniform sampler2D alphaMap;
 uniform float uUseMask;
 uniform float uSat;
+uniform float uDim;
 varying vec2 vUv;
 void main() {
   vec4 c = texture2D(map, vUv);
   float a = c.a * mix(1.0, texture2D(alphaMap, vUv).r, uUseMask);
   float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
-  gl_FragColor = vec4(mix(vec3(l), c.rgb, uSat), a);
+  vec3 rgb = mix(vec3(l) * uDim, c.rgb, uSat);
+  gl_FragColor = vec4(rgb, a);
   #include <colorspace_fragment>
 }
 `;
 
-function cameFromInteractiveDom(e: ThreeEvent<PointerEvent | MouseEvent>) {
-  const target = e.nativeEvent.target as Element | null;
-  return Boolean(target?.closest?.("a, button, input, textarea, select"));
+/** Evenly spread points on a sphere (Fibonacci lattice). */
+function spherePoint(i: number, n: number, r: number) {
+  const y = 1 - (i / (n - 1)) * 2;
+  const rad = Math.sqrt(1 - y * y);
+  const theta = i * Math.PI * (3 - Math.sqrt(5));
+  return new THREE.Vector3(Math.cos(theta) * rad * r, y * r * 0.8, Math.sin(theta) * rad * r);
 }
+
+export type Spin = { y: number; x: number };
 
 function Tile({
   product,
+  base,
   index,
-  total,
-  scroll,
+  spinRef,
   reduced,
+  touch,
+  selected,
+  onSelect,
   labelLayer,
 }: {
   product: Product;
+  base: THREE.Vector3;
   index: number;
-  total: number;
-  scroll: React.RefObject<ScrollState>;
+  spinRef: React.RefObject<Spin>;
   reduced: React.RefObject<boolean>;
+  touch: boolean;
+  selected: boolean;
+  onSelect: (id: string | null) => void;
   labelLayer: React.RefObject<HTMLDivElement>;
 }) {
   const group = useRef<THREE.Group>(null!);
   const inner = useRef<THREE.Group>(null!);
+  const bodyRef = useRef<THREE.MeshStandardMaterial>(null!);
+  const logoFront = useRef<THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial>>(null!);
   const [hovered, setHovered] = useState(false);
+  const lit = hovered || selected;
   useCursor(hovered);
-  const { viewport } = useThree();
-  const portrait = viewport.aspect < 1;
-  // No hover device means no way to bring colour back, so rest nearly saturated.
-  const restSat = useMemo(
-    () => (typeof window !== "undefined" && window.matchMedia("(hover: none)").matches ? 0.85 : 0.1),
-    [],
-  );
 
   const texture = useTexture(product.logo, (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
-    t.anisotropy = 8;
-    t.generateMipmaps = true;
-    t.minFilter = THREE.LinearMipmapLinearFilter;
+    t.anisotropy = 4;
   });
   const logoSize = useMemo(() => {
     const img = texture.image as { width?: number; height?: number } | undefined;
     const w = img?.width ?? 1;
     const h = img?.height ?? 1;
-    const max = product.logoBleed ? 0.84 : 0.6;
+    const max = product.logoBleed ? 0.84 : 0.56;
     return w >= h ? [max, (max * h) / w] : [(max * w) / h, max];
   }, [texture, product.logoBleed]);
-
   const mask = useMemo(() => (product.logoBleed ? getRoundedMask() : null), [product.logoBleed]);
 
-  const hex = accentHex[product.accent];
-  const glowColor = useMemo(() => new THREE.Color(hex), [hex]);
-  const bodyRef = useRef<THREE.MeshPhysicalMaterial>(null!);
-  const logoFront = useRef<THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial>>(null!);
-
-  // Logos rest desaturated and bloom to full colour on hover.
   const logoMaterial = useMemo(
     () =>
       new THREE.ShaderMaterial({
@@ -115,61 +109,55 @@ function Tile({
           map: { value: texture },
           alphaMap: { value: mask },
           uUseMask: { value: mask ? 1 : 0 },
-          uSat: { value: restSat },
+          uSat: { value: 0 },
+          uDim: { value: product.logoBleed ? 0.75 : 0.9 },
         },
         vertexShader: logoVertex,
         fragmentShader: logoFragment,
         transparent: true,
       }),
-    [texture, mask, restSat],
+    [texture, mask, product.logoBleed],
   );
 
-  const baseAngle = (index / total) * Math.PI * 2;
-  const lift = useMemo(() => (index % 2 === 0 ? 0.55 : -0.55) + Math.sin(index * 7.3) * 0.25, [index]);
+  const glowColor = useMemo(() => new THREE.Color(accentHex[product.accent]), [product.accent]);
 
   useFrame((state, dt) => {
     const t = state.clock.elapsedTime;
-    const { vh, progress } = scroll.current;
     const slow = reduced.current ? 0.1 : 1;
-    const spread = smooth(vh / 1.6);
-    const radius = portrait
-      ? lerp(1.5, 3.3, spread) + progress * 0.6
-      : lerp(3.0, 5.6, spread) + progress * 1.2;
-    const angle = baseAngle + t * 0.07 * slow + vh * 0.45;
+    const { x: sx, y: sy } = spinRef.current;
 
-    group.current.position.set(
-      Math.cos(angle) * radius * (portrait ? 1 : 0.9),
-      lift * (portrait ? 0.5 : 1) +
-        Math.sin(angle * 2 + t * 0.3 * slow) * 0.25 +
-        (portrait ? vh * 0.15 : spread - vh * 0.3),
-      Math.sin(angle) * radius * 0.65 - 1.6,
-    );
+    scratch.copy(base);
+    scratch.applyAxisAngle(X_AXIS, sx);
+    scratch.applyAxisAngle(Y_AXIS, t * 0.05 * slow + sy);
+    scratch.y += Math.sin(t * 0.6 * slow + index * 1.3) * 0.05;
+    group.current.position.copy(scratch);
 
-    const targetScale = (portrait ? 0.68 : 1) * (hovered ? 1.25 : 1);
-    const s = damp(group.current.scale.x, targetScale, 8, dt);
-    group.current.scale.setScalar(s);
+    const targetScale = lit ? 1.18 : 1;
+    group.current.scale.setScalar(damp(group.current.scale.x, targetScale, 8, dt));
 
-    // Idle: a lazy wobble so logos stay readable. Hover: snap to face the camera.
-    const ry = hovered ? 0 : Math.sin(t * 0.45 * slow + index) * 0.5;
-    const rx = hovered ? 0 : Math.cos(t * 0.35 * slow + index * 1.7) * 0.22;
-    inner.current.rotation.y = damp(inner.current.rotation.y, ry, 8, dt);
-    inner.current.rotation.x = damp(inner.current.rotation.x, rx, 8, dt);
-    inner.current.rotation.z = damp(inner.current.rotation.z, hovered ? 0 : Math.sin(t * 0.3 + index) * 0.08, 8, dt);
+    // Face the camera with a lazy wobble; hold still while lit.
+    const ry = lit ? 0 : Math.sin(t * 0.4 * slow + index) * 0.35;
+    const rx = lit ? 0 : Math.cos(t * 0.3 * slow + index * 1.7) * 0.18;
+    inner.current.rotation.y = damp(inner.current.rotation.y, ry, 6, dt);
+    inner.current.rotation.x = damp(inner.current.rotation.x, rx, 6, dt);
 
     const sat = logoFront.current.material.uniforms.uSat as { value: number };
-    sat.value = damp(sat.value, hovered ? 1 : restSat, hovered ? 7 : 3, dt);
-    bodyRef.current.emissiveIntensity = damp(bodyRef.current.emissiveIntensity, hovered ? 0.3 : 0, 7, dt);
+    sat.value = damp(sat.value, lit ? 1 : 0, lit ? 8 : 3, dt);
+    bodyRef.current.emissiveIntensity = damp(bodyRef.current.emissiveIntensity, lit ? 0.22 : 0, 7, dt);
   });
 
   const onOver = (e: ThreeEvent<PointerEvent>) => {
-    if (cameFromInteractiveDom(e)) return;
     e.stopPropagation();
     setHovered(true);
   };
   const onOut = () => setHovered(false);
   const onClick = (e: ThreeEvent<MouseEvent>) => {
-    if (cameFromInteractiveDom(e)) return;
     e.stopPropagation();
+    // Without hover, the first tap lights the tile up; the second opens it.
+    if (touch && !selected) {
+      onSelect(product.id);
+      return;
+    }
     window.open(product.url, "_blank", "noopener,noreferrer");
   };
 
@@ -177,23 +165,21 @@ function Tile({
     <group ref={group}>
       <group ref={inner}>
         <RoundedBox
-          args={[0.98, 0.98, 0.16]}
+          args={[0.98, 0.98, 0.14]}
           radius={0.2}
-          smoothness={6}
+          smoothness={4}
           onPointerOver={onOver}
           onPointerOut={onOut}
           onClick={onClick}
         >
-          <meshPhysicalMaterial
+          <meshStandardMaterial
             ref={bodyRef}
-            color="#15151d"
-            roughness={0.28}
-            metalness={0.45}
-            clearcoat={1}
-            clearcoatRoughness={0.12}
+            color="#15151c"
+            roughness={0.25}
+            metalness={0.5}
             emissive={glowColor}
             emissiveIntensity={0}
-            envMapIntensity={1.3}
+            envMapIntensity={1.1}
           />
         </RoundedBox>
 
@@ -201,7 +187,7 @@ function Tile({
           <mesh
             key={side}
             ref={side === 1 ? logoFront : undefined}
-            position-z={side * 0.086}
+            position-z={side * 0.076}
             rotation-y={side === 1 ? 0 : Math.PI}
             material={logoMaterial}
           >
@@ -209,17 +195,21 @@ function Tile({
           </mesh>
         ))}
 
-        {hovered && (
+        {lit && !touch && (
           <Html
             center
-            position={[0, -0.85, 0]}
+            position={[0, -0.82, 0]}
             portal={labelLayer}
             zIndexRange={[30, 20]}
             style={{ pointerEvents: "none" }}
           >
-            <div className="flex -translate-y-1 items-center gap-2 whitespace-nowrap rounded-full border border-white/15 bg-ink/85 px-3 py-1.5 text-xs text-fog shadow-lg backdrop-blur">
-              <span className="font-semibold">{product.name}</span>
-              <span className="text-fog-3">{product.host} ↗</span>
+            <div className="flex items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-ink/90 px-3 py-1.5 text-xs text-fog shadow-lg">
+              <span
+                className="size-1.5 rounded-full"
+                style={{ background: accentHex[product.accent] }}
+              />
+              <span className="font-medium">{product.name}</span>
+              <span className="text-fog-3">{product.host}</span>
             </div>
           </Html>
         )}
@@ -228,37 +218,48 @@ function Tile({
   );
 }
 
-export function LogoTiles({
-  scroll,
-  reduced,
-  labelLayer,
-}: {
-  scroll: React.RefObject<ScrollState>;
-  reduced: React.RefObject<boolean>;
-  labelLayer: React.RefObject<HTMLDivElement>;
-}) {
-  const group = useRef<THREE.Group>(null!);
-  const { viewport } = useThree();
-  const portrait = viewport.aspect < 1;
+const X_AXIS = new THREE.Vector3(1, 0, 0);
+const Y_AXIS = new THREE.Vector3(0, 1, 0);
+const scratch = new THREE.Vector3();
 
-  useFrame((_, dt) => {
-    const k = smooth(scroll.current.vh / 1.6);
-    const targetX = portrait ? 0 : lerp(2.95, 0.6, k);
-    const targetY = portrait ? lerp(2.2, 2.9, k) : 0;
-    group.current.position.x = damp(group.current.position.x, targetX, 3, dt);
-    group.current.position.y = damp(group.current.position.y, targetY, 3, dt);
-  });
+export function LogoTiles({
+  radius = 2.5,
+  spinRef,
+  reduced,
+  touch,
+  labelLayer,
+  onSelect,
+}: {
+  radius?: number;
+  spinRef: React.RefObject<Spin>;
+  reduced: React.RefObject<boolean>;
+  touch: boolean;
+  labelLayer: React.RefObject<HTMLDivElement>;
+  onSelect?: (product: Product | null) => void;
+}) {
+  const [selected, setSelectedId] = useState<string | null>(null);
+  const setSelected = (id: string | null) => {
+    setSelectedId(id);
+    onSelect?.(id ? (products.find((p) => p.id === id) ?? null) : null);
+  };
+  const bases = useMemo(
+    () => products.map((_, i) => spherePoint(i, products.length, radius)),
+    [radius],
+  );
 
   return (
-    <group ref={group}>
+    <group onPointerMissed={() => setSelected(null)}>
       {products.map((p, i) => (
         <Tile
           key={p.id}
           product={p}
+          base={bases[i]}
           index={i}
-          total={products.length}
-          scroll={scroll}
+          spinRef={spinRef}
           reduced={reduced}
+          touch={touch}
+          selected={selected === p.id}
+          onSelect={setSelected}
           labelLayer={labelLayer}
         />
       ))}
