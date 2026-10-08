@@ -1,0 +1,267 @@
+"use client";
+
+import { Html, RoundedBox, useCursor, useTexture } from "@react-three/drei";
+import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
+import { useMemo, useRef, useState } from "react";
+import * as THREE from "three";
+import { accentHex, products, type Product } from "@/data/products";
+import type { ScrollState } from "./use-scroll-progress";
+
+const damp = THREE.MathUtils.damp;
+const lerp = THREE.MathUtils.lerp;
+const smooth = (t: number) => {
+  const x = THREE.MathUtils.clamp(t, 0, 1);
+  return x * x * (3 - 2 * x);
+};
+
+let roundedMask: THREE.CanvasTexture | null = null;
+/** Shared alpha mask that rounds the corners of full-bleed logo planes. */
+function getRoundedMask() {
+  if (roundedMask) return roundedMask;
+  const size = 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d")!;
+  const r = size * 0.2;
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.roundRect(0, 0, size, size, r);
+  ctx.fill();
+  roundedMask = new THREE.CanvasTexture(canvas);
+  return roundedMask;
+}
+
+const logoVertex = /* glsl */ `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+
+const logoFragment = /* glsl */ `
+uniform sampler2D map;
+uniform sampler2D alphaMap;
+uniform float uUseMask;
+uniform float uSat;
+varying vec2 vUv;
+void main() {
+  vec4 c = texture2D(map, vUv);
+  float a = c.a * mix(1.0, texture2D(alphaMap, vUv).r, uUseMask);
+  float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
+  gl_FragColor = vec4(mix(vec3(l), c.rgb, uSat), a);
+  #include <colorspace_fragment>
+}
+`;
+
+function cameFromInteractiveDom(e: ThreeEvent<PointerEvent | MouseEvent>) {
+  const target = e.nativeEvent.target as Element | null;
+  return Boolean(target?.closest?.("a, button, input, textarea, select"));
+}
+
+function Tile({
+  product,
+  index,
+  total,
+  scroll,
+  reduced,
+  labelLayer,
+}: {
+  product: Product;
+  index: number;
+  total: number;
+  scroll: React.RefObject<ScrollState>;
+  reduced: React.RefObject<boolean>;
+  labelLayer: React.RefObject<HTMLDivElement>;
+}) {
+  const group = useRef<THREE.Group>(null!);
+  const inner = useRef<THREE.Group>(null!);
+  const [hovered, setHovered] = useState(false);
+  useCursor(hovered);
+  const { viewport } = useThree();
+  const portrait = viewport.aspect < 1;
+  // No hover device means no way to bring colour back, so rest nearly saturated.
+  const restSat = useMemo(
+    () => (typeof window !== "undefined" && window.matchMedia("(hover: none)").matches ? 0.85 : 0.1),
+    [],
+  );
+
+  const texture = useTexture(product.logo, (t) => {
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    t.generateMipmaps = true;
+    t.minFilter = THREE.LinearMipmapLinearFilter;
+  });
+  const logoSize = useMemo(() => {
+    const img = texture.image as { width?: number; height?: number } | undefined;
+    const w = img?.width ?? 1;
+    const h = img?.height ?? 1;
+    const max = product.logoBleed ? 0.84 : 0.6;
+    return w >= h ? [max, (max * h) / w] : [(max * w) / h, max];
+  }, [texture, product.logoBleed]);
+
+  const mask = useMemo(() => (product.logoBleed ? getRoundedMask() : null), [product.logoBleed]);
+
+  const hex = accentHex[product.accent];
+  const glowColor = useMemo(() => new THREE.Color(hex), [hex]);
+  const bodyRef = useRef<THREE.MeshPhysicalMaterial>(null!);
+  const logoFront = useRef<THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial>>(null!);
+
+  // Logos rest desaturated and bloom to full colour on hover.
+  const logoMaterial = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        uniforms: {
+          map: { value: texture },
+          alphaMap: { value: mask },
+          uUseMask: { value: mask ? 1 : 0 },
+          uSat: { value: restSat },
+        },
+        vertexShader: logoVertex,
+        fragmentShader: logoFragment,
+        transparent: true,
+      }),
+    [texture, mask, restSat],
+  );
+
+  const baseAngle = (index / total) * Math.PI * 2;
+  const lift = useMemo(() => (index % 2 === 0 ? 0.55 : -0.55) + Math.sin(index * 7.3) * 0.25, [index]);
+
+  useFrame((state, dt) => {
+    const t = state.clock.elapsedTime;
+    const { vh, progress } = scroll.current;
+    const slow = reduced.current ? 0.1 : 1;
+    const spread = smooth(vh / 1.6);
+    const radius = portrait
+      ? lerp(1.5, 3.3, spread) + progress * 0.6
+      : lerp(3.0, 5.6, spread) + progress * 1.2;
+    const angle = baseAngle + t * 0.07 * slow + vh * 0.45;
+
+    group.current.position.set(
+      Math.cos(angle) * radius * (portrait ? 1 : 0.9),
+      lift * (portrait ? 0.5 : 1) +
+        Math.sin(angle * 2 + t * 0.3 * slow) * 0.25 +
+        (portrait ? vh * 0.15 : spread - vh * 0.3),
+      Math.sin(angle) * radius * 0.65 - 1.6,
+    );
+
+    const targetScale = (portrait ? 0.68 : 1) * (hovered ? 1.25 : 1);
+    const s = damp(group.current.scale.x, targetScale, 8, dt);
+    group.current.scale.setScalar(s);
+
+    // Idle: a lazy wobble so logos stay readable. Hover: snap to face the camera.
+    const ry = hovered ? 0 : Math.sin(t * 0.45 * slow + index) * 0.5;
+    const rx = hovered ? 0 : Math.cos(t * 0.35 * slow + index * 1.7) * 0.22;
+    inner.current.rotation.y = damp(inner.current.rotation.y, ry, 8, dt);
+    inner.current.rotation.x = damp(inner.current.rotation.x, rx, 8, dt);
+    inner.current.rotation.z = damp(inner.current.rotation.z, hovered ? 0 : Math.sin(t * 0.3 + index) * 0.08, 8, dt);
+
+    const sat = logoFront.current.material.uniforms.uSat as { value: number };
+    sat.value = damp(sat.value, hovered ? 1 : restSat, hovered ? 7 : 3, dt);
+    bodyRef.current.emissiveIntensity = damp(bodyRef.current.emissiveIntensity, hovered ? 0.3 : 0, 7, dt);
+  });
+
+  const onOver = (e: ThreeEvent<PointerEvent>) => {
+    if (cameFromInteractiveDom(e)) return;
+    e.stopPropagation();
+    setHovered(true);
+  };
+  const onOut = () => setHovered(false);
+  const onClick = (e: ThreeEvent<MouseEvent>) => {
+    if (cameFromInteractiveDom(e)) return;
+    e.stopPropagation();
+    window.open(product.url, "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <group ref={group}>
+      <group ref={inner}>
+        <RoundedBox
+          args={[0.98, 0.98, 0.16]}
+          radius={0.2}
+          smoothness={6}
+          onPointerOver={onOver}
+          onPointerOut={onOut}
+          onClick={onClick}
+        >
+          <meshPhysicalMaterial
+            ref={bodyRef}
+            color="#15151d"
+            roughness={0.28}
+            metalness={0.45}
+            clearcoat={1}
+            clearcoatRoughness={0.12}
+            emissive={glowColor}
+            emissiveIntensity={0}
+            envMapIntensity={1.3}
+          />
+        </RoundedBox>
+
+        {[1, -1].map((side) => (
+          <mesh
+            key={side}
+            ref={side === 1 ? logoFront : undefined}
+            position-z={side * 0.086}
+            rotation-y={side === 1 ? 0 : Math.PI}
+            material={logoMaterial}
+          >
+            <planeGeometry args={[logoSize[0], logoSize[1]]} />
+          </mesh>
+        ))}
+
+        {hovered && (
+          <Html
+            center
+            position={[0, -0.85, 0]}
+            portal={labelLayer}
+            zIndexRange={[30, 20]}
+            style={{ pointerEvents: "none" }}
+          >
+            <div className="flex -translate-y-1 items-center gap-2 whitespace-nowrap rounded-full border border-white/15 bg-ink/85 px-3 py-1.5 text-xs text-fog shadow-lg backdrop-blur">
+              <span className="font-semibold">{product.name}</span>
+              <span className="text-fog-3">{product.host} ↗</span>
+            </div>
+          </Html>
+        )}
+      </group>
+    </group>
+  );
+}
+
+export function LogoTiles({
+  scroll,
+  reduced,
+  labelLayer,
+}: {
+  scroll: React.RefObject<ScrollState>;
+  reduced: React.RefObject<boolean>;
+  labelLayer: React.RefObject<HTMLDivElement>;
+}) {
+  const group = useRef<THREE.Group>(null!);
+  const { viewport } = useThree();
+  const portrait = viewport.aspect < 1;
+
+  useFrame((_, dt) => {
+    const k = smooth(scroll.current.vh / 1.6);
+    const targetX = portrait ? 0 : lerp(2.95, 0.6, k);
+    const targetY = portrait ? lerp(2.2, 2.9, k) : 0;
+    group.current.position.x = damp(group.current.position.x, targetX, 3, dt);
+    group.current.position.y = damp(group.current.position.y, targetY, 3, dt);
+  });
+
+  return (
+    <group ref={group}>
+      {products.map((p, i) => (
+        <Tile
+          key={p.id}
+          product={p}
+          index={i}
+          total={products.length}
+          scroll={scroll}
+          reduced={reduced}
+          labelLayer={labelLayer}
+        />
+      ))}
+    </group>
+  );
+}
