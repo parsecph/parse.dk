@@ -83,7 +83,7 @@ function Tile({
 }) {
   const group = useRef<THREE.Group>(null!);
   const inner = useRef<THREE.Group>(null!);
-  const bodyRef = useRef<THREE.MeshPhysicalMaterial>(null!);
+  const bodyRef = useRef<THREE.MeshStandardMaterial>(null!);
   const logoFront = useRef<THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial>>(null!);
   const [hovered, setHovered] = useState(false);
   const lit = hovered || selected;
@@ -172,13 +172,11 @@ function Tile({
           onPointerOut={onOut}
           onClick={onClick}
         >
-          <meshPhysicalMaterial
+          <meshStandardMaterial
             ref={bodyRef}
             color="#15151c"
-            roughness={0.3}
-            metalness={0.4}
-            clearcoat={0.8}
-            clearcoatRoughness={0.15}
+            roughness={0.25}
+            metalness={0.5}
             emissive={glowColor}
             emissiveIntensity={0}
             envMapIntensity={1.1}

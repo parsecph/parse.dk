@@ -127,7 +127,8 @@ export default function HeroScene({
   const small = useMedia("(max-width: 1023px)");
   const reduced = useReducedMotionRef();
   const { target, spin } = useSpin(!touch);
-  const [dpr, setDpr] = useState<number | [number, number]>([1, 1.5]);
+  const maxDpr = touch ? 1.25 : 1.5;
+  const [dpr, setDpr] = useState<number | [number, number]>([1, maxDpr]);
   const detail = useMemo(() => (small || touch ? 28 : 44), [small, touch]);
 
   return (
@@ -136,7 +137,7 @@ export default function HeroScene({
       frameloop={active ? "always" : "never"}
       camera={{ position: [0, 0, 9], fov: 34, near: 0.1, far: 40 }}
       gl={{
-        antialias: true,
+        antialias: !(small || touch),
         alpha: true,
         powerPreference: "high-performance",
         toneMapping: THREE.ACESFilmicToneMapping,
@@ -147,7 +148,7 @@ export default function HeroScene({
     >
       <PerformanceMonitor
         onDecline={() => setDpr(1)}
-        onIncline={() => setDpr([1, 1.5])}
+        onIncline={() => setDpr([1, maxDpr])}
         flipflops={2}
         onFallback={() => setDpr(1)}
       />
